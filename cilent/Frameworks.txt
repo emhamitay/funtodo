@@ -1,0 +1,5 @@
+Zustand
+react-calendar (חיצוני)
+react-beautiful-dnd
+Heroicons	
+https://github.com/tailwindlabs/tailwindcss-typography/blob/main/README.md
