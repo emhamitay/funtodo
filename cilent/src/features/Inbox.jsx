@@ -26,12 +26,20 @@ export default function Inbox() {
         className="h-full"
       >
         <div className="flex flex-col gap-3">
-        {filteredTasks.map((task) => (
-          <SortableDraggable key={task.id} id={task.id}>
-            <Task task={task} />
-          </SortableDraggable>
-          
-        ))}
+          {filteredTasks.length === 0 ? (
+            <div className="text-center py-4">
+              <p className="text-gray-500 italic mb-2">Inbox is empty</p>
+              <p className="text-sm text-gray-400">
+                Use the "New Task" button above to create your first task
+              </p>
+            </div>
+          ) : (
+            filteredTasks.map((task) => (
+              <SortableDraggable key={task.id} id={task.id}>
+                <Task task={task} />
+              </SortableDraggable>
+            ))
+          )}
         </div>
       </DroppableSortableWrapper>
     </div>

@@ -4,6 +4,7 @@ import { Button } from "@/components/Button";
 import { Textarea } from "@/components/ui/Textarea";
 import { useState } from "react";
 import { DialogClose } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 export default function Form({
   handleSubmit,
@@ -27,7 +28,7 @@ export default function Form({
     e.preventDefault();
 
     if (!name.trim()) {
-      alert("Please enter a task name");
+      toast.error("Hey! Give your task a name");
       return;
     }
 

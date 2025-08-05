@@ -1,40 +1,63 @@
 import { Button } from "@/components/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Login from './Login'
 import Register from './Register'
 import useTasksStore from "@/store/TasksStore";
+import { toast } from "sonner";
 
 export default function LoginFeature() {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isRegisterOpen, setRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { setUserId, loadTasks, clearTasks } = useTasksStore();
+  const { setUserId, loadTasks, clearTasks, initialize, mergeLocalTasks, isOnline } = useTasksStore();
+
+  // Initialize store with local storage data on component mount
+  useEffect(() => {
+    initialize();
+    // Check if user was previously logged in
+    const localUserId = localStorage.getItem('funtodo_local_user_id');
+    if (localUserId) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    clearTasks(); // Clear tasks from store
+    clearTasks(); // Clear tasks from store and local storage
+    toast.success('See you later! Your tasks are safe and sound locally.');
   };
 
-  const handleLoginSuccess = (userId) => {
+  const handleLoginSuccess = async (userId) => {
     setIsLoggedIn(true);
     setPopupOpen(false);
     setUserId(userId);
-    loadTasks(userId); // Load tasks from server
+    
+    // Merge local tasks with server tasks if any exist
+    await mergeLocalTasks(userId);
+    
+    // Load tasks from server
+    await loadTasks(userId);
   };
 
-  const handleRegisterSuccess = (userId) => {
+  const handleRegisterSuccess = async (userId) => {
     setIsLoggedIn(true);
     setPopupOpen(false);
     setUserId(userId);
-    loadTasks(userId); // Load tasks from server
+    
+    // Merge local tasks with server tasks if any exist
+    await mergeLocalTasks(userId);
+    
+    // Load tasks from server
+    await loadTasks(userId);
   };
 
   return (
     <>
       {/* Trigger */}
-      <Button
+      <Button 
+        className="tutorial-step-6"
         onClick={() => {
           if (isLoggedIn) {
             handleLogout();
@@ -45,6 +68,13 @@ export default function LoginFeature() {
       >
         {isLoggedIn ? 'Logout' : 'Login'}
       </Button>
+
+      {/* Status indicator */}
+      {!isLoggedIn && (
+        <div className="text-xs text-gray-500 ml-2">
+          Working offline
+        </div>
+      )}
 
       {/* Popup */}
       {isPopupOpen && (

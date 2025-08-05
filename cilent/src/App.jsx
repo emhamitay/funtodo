@@ -4,7 +4,7 @@ import Inbox from "@/features/Inbox";
 import { Separator } from "@/components/ui/separator";
 import AiToolbar from "./features/AiToolbar";
 import { TaskCalendar } from "./features/TaskCalendar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TasksView from "@/features/TasksView";
 import Information from "@/features/Information";
 import { DndProvider, GhostLayer } from "bhi-dnd";
@@ -12,11 +12,20 @@ import Tutorial from "@/lib/tutorial/Tutorial";
 import steps from "@/lib/tutorial/steps";
 import { Button } from "@/components/Button";
 import LoginFeature from "./features/login/LoginFeature";
+import useTasksStore from "@/store/TasksStore";
+import { Toaster } from "sonner";
 
 function App() {
   // Selected date State
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isTutorialOn, setTutorialOn] = useState(true);
+  
+  // Initialize store with local storage data
+  const initialize = useTasksStore((state) => state.initialize);
+  
+  useEffect(() => {
+    initialize();
+  }, []);
 
   return (
     <>
@@ -66,6 +75,7 @@ function App() {
                 Help
               </Button>
               <LoginFeature />
+              {/* tutorial-step-6 */}
             </div>
             <Separator />
 
@@ -88,6 +98,12 @@ function App() {
           </main>
         </div>
       </DndProvider>
+      <Toaster 
+        position="top-center"
+        richColors
+        closeButton
+        duration={4000}
+      />
     </>
   );
 }

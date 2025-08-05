@@ -14,7 +14,7 @@ const steps = [
   {
     selector: ".tutorial-step-1",
     content: "Begin by creating a few tasks using the 'New Task' button.",
-    placement: TooltipPlacement.RightCenter,
+    placement: TooltipPlacement.RightStart,
   },
   {
     selector: ".tutorial-step-2",
@@ -28,20 +28,26 @@ const steps = [
       "To schedule tasks, drag them into your calendar. \n" +
       "Days with pending tasks will appear with a yellow background. \n" +
       "Once all tasks for a day are completed, the background will turn green.",
-    placement: TooltipPlacement.RightCenter,
+    placement: TooltipPlacement.RightStart,
   },
   {
     selector: ".tutorial-step-4",
     content:
       "Selecting a specific day on your calendar will display its associated tasks below. \n" +
       "You can easily drag tasks between your inbox and the selected day's task list.",
-    placement: TooltipPlacement.TopCenter,
+    placement: TooltipPlacement.TopStart,
   },
   {
     selector: ".tutorial-step-5",
     content:
       "Need assistance organizing or generating tasks? Just ask the AI—it's here to help.",
-    placement: TooltipPlacement.BottomCenter,
+    placement: TooltipPlacement.BottomStart,
+  },
+  {
+    selector: ".tutorial-step-6",
+    content:
+      "By logging in, you can access your tasks across multiple devices.",
+    placement: TooltipPlacement.LeftStart,
   },
 ];
 

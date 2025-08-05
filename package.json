@@ -1,8 +1,35 @@
 {
-  "dependencies": {
-    "@prisma/client": "^6.13.0",
-    "bcryptjs": "^3.0.2",
-    "pg": "^8.16.3",
-    "prisma": "^6.13.0"
-  }
-}
+  "name": "funtodo-fullstack",
+  "version": "1.0.0",
+  "description": "Full stack task management application with offline functionality",
+  "private": true,
+  "workspaces": [
+    "cilent",
+    "server"
+  ],
+  "scripts": {
+    "dev:client": "cd cilent && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "install:all": "npm install && cd cilent && npm install && cd ../server && npm install",
+    "build:client": "cd cilent && npm run build",
+    "test:server": "cd server && npm test",
+    "db:generate": "cd server && npx prisma generate",
+    "db:migrate": "cd server && npx prisma migrate dev",
+    "db:studio": "cd server && npx prisma studio"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "todo",
+    "task-management",
+    "offline",
+    "react",
+    "nodejs",
+    "express",
+    "prisma"
+  ],
+  "author": "",
+  "license": "ISC"
+} 
