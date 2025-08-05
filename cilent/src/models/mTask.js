@@ -11,14 +11,15 @@ export class mTask {
     date = null,
     id = null,
     isdone = false,
-    priority = "medium"
+    priority = "medium",
+    groupIndex = 0
   ) {
     this.id = id || crypto.randomUUID();
     this.name = name;
     this.description = description;
     this.isdone = isdone;
     this.date = date;
-    this.groupIndex = null; // would be updated in the store
+    this.groupIndex = groupIndex;
     this.priority = priority;
   }
 
@@ -29,8 +30,9 @@ export class mTask {
       serverTask.description || '',
       serverTask.dueDate ? new Date(serverTask.dueDate) : null,
       serverTask.id,
-      serverTask.completed, // Server uses 'completed', frontend uses 'isdone'
-      serverTask.priority
+      serverTask.completed || serverTask.isDone, // Handle both 'completed' and 'isDone'
+      serverTask.priority,
+      serverTask.groupIndex || 0
     );
   }
 

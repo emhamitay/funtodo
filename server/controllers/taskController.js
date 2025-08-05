@@ -12,10 +12,17 @@ exports.getTasks = async (req, res) => {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
+  // Validate userId is a number
+  const userIdNum = parseInt(userId);
+  if (isNaN(userIdNum)) {
+    console.log('Invalid userId format:', userId);
+    return res.status(400).json({ error: 'Invalid user ID format' });
+  }
+
   try {
-    console.log('Getting tasks for user:', userId);
+    console.log('Getting tasks for user:', userIdNum);
     const tasks = await prisma.task.findMany({
-      where: { userId: parseInt(userId) },
+      where: { userId: userIdNum },
       orderBy: { createdAt: 'desc' }
     });
     console.log('Found tasks:', tasks.length, 'tasks:', tasks);
@@ -37,15 +44,22 @@ exports.createTask = async (req, res) => {
     return res.status(400).json({ error: 'User ID and title are required' });
   }
 
+  // Validate userId is a number
+  const userIdNum = parseInt(userId);
+  if (isNaN(userIdNum)) {
+    console.log('Invalid userId format:', userId);
+    return res.status(400).json({ error: 'Invalid user ID format' });
+  }
+
   try {
-    console.log('Creating task for user:', userId);
+    console.log('Creating task for user:', userIdNum);
     const task = await prisma.task.create({
       data: {
         title,
         description: description || '',
         dueDate: dueDate ? new Date(dueDate) : null,
         priority: priority || 'medium',
-        userId: parseInt(userId)
+        userId: userIdNum
       }
     });
     console.log('Task created successfully:', task);
@@ -67,10 +81,27 @@ exports.updateTask = async (req, res) => {
     return res.status(400).json({ error: 'Task ID is required' });
   }
 
+  // Validate taskId is a number
+  const taskIdNum = parseInt(taskId);
+  if (isNaN(taskIdNum)) {
+    console.log('Invalid taskId format:', taskId);
+    return res.status(400).json({ error: 'Invalid task ID format' });
+  }
+
   try {
-    console.log('Updating task:', taskId);
+    console.log('Updating task:', taskIdNum);
+    
+    // Check if task exists
+    const existingTask = await prisma.task.findUnique({
+      where: { id: taskIdNum }
+    });
+    
+    if (!existingTask) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
     const task = await prisma.task.update({
-      where: { id: parseInt(taskId) },
+      where: { id: taskIdNum },
       data: {
         title: title !== undefined ? title : undefined,
         description: description !== undefined ? description : undefined,
@@ -95,12 +126,28 @@ exports.deleteTask = async (req, res) => {
     return res.status(400).json({ error: 'Task ID is required' });
   }
 
+  // Validate taskId is a number
+  const taskIdNum = parseInt(taskId);
+  if (isNaN(taskIdNum)) {
+    return res.status(400).json({ error: 'Invalid task ID format' });
+  }
+
   try {
-    console.log('Deleting task:', taskId);
-    await prisma.task.delete({
-      where: { id: parseInt(taskId) }
+    console.log('Deleting task:', taskIdNum);
+    
+    // Check if task exists
+    const existingTask = await prisma.task.findUnique({
+      where: { id: taskIdNum }
     });
-    console.log('Task deleted:', taskId);
+    
+    if (!existingTask) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    await prisma.task.delete({
+      where: { id: taskIdNum }
+    });
+    console.log('Task deleted:', taskIdNum);
     res.json({ message: 'Task deleted successfully' });
   } catch (err) {
     console.error('Error deleting task:', err);
@@ -116,10 +163,16 @@ exports.toggleTask = async (req, res) => {
     return res.status(400).json({ error: 'Task ID is required' });
   }
 
+  // Validate taskId is a number
+  const taskIdNum = parseInt(taskId);
+  if (isNaN(taskIdNum)) {
+    return res.status(400).json({ error: 'Invalid task ID format' });
+  }
+
   try {
-    console.log('Toggling task:', taskId);
+    console.log('Toggling task:', taskIdNum);
     const currentTask = await prisma.task.findUnique({
-      where: { id: parseInt(taskId) }
+      where: { id: taskIdNum }
     });
     
     if (!currentTask) {
@@ -127,7 +180,7 @@ exports.toggleTask = async (req, res) => {
     }
 
     const task = await prisma.task.update({
-      where: { id: parseInt(taskId) },
+      where: { id: taskIdNum },
       data: { completed: !currentTask.completed }
     });
     console.log('Task toggled:', task.id, 'completed:', task.completed);
