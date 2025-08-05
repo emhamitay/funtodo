@@ -32,7 +32,7 @@ export default function Information(){
                 type='npm' 
                 pre="Available on npm as "
             >
-                bhi-dnd
+               {" "}bhi-dnd
             </Link>
         </div>
     );
