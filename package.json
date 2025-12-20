@@ -4,19 +4,14 @@
   "description": "Full stack task management application with offline functionality",
   "private": true,
   "workspaces": [
-    "cilent",
-    "server"
+    "client"
   ],
   "scripts": {
-    "dev:client": "cd cilent && npm run dev",
-    "dev:server": "cd server && npm run dev",
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "install:all": "npm install && cd cilent && npm install && cd ../server && npm install",
-    "build:client": "cd cilent && npm run build",
-    "test:server": "cd server && npm test",
-    "db:generate": "cd server && npx prisma generate",
-    "db:migrate": "cd server && npx prisma migrate dev",
-    "db:studio": "cd server && npx prisma studio"
+    "dev:client": "cd client && npm run dev",
+    "dev": "npm run dev:client",
+    "install:all": "npm install && cd client && npm install",
+    "build:client": "cd client && npm run build",
+    "test:client": "cd client && npm test"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
@@ -32,4 +27,4 @@
   ],
   "author": "",
   "license": "ISC"
-} 
+}

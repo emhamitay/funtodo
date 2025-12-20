@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/Button";
 import { Textarea } from "@/components/ui/Textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { DialogClose } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -13,10 +14,12 @@ export default function Form({
   taskParams = {
     name: "",
     description: "",
+    isdone: false,
   },
 }) {
   const [name, setName] = useState(taskParams.name);
   const [description, setDescription] = useState(taskParams.description);
+  const [isdone, setIsdone] = useState(taskParams.isdone ?? false);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -32,7 +35,7 @@ export default function Form({
       return;
     }
 
-    handleSubmit({ name, description });
+    handleSubmit({ name, description, isdone });
 
     setOpen(false); //Closing the dialog automatic
   }
@@ -64,6 +67,19 @@ export default function Form({
           rows={3}
         />
       </div>
+
+      {taskParams.isdone !== undefined && (
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="task-done"
+            checked={isdone}
+            onCheckedChange={setIsdone}
+          />
+          <Label htmlFor="task-done" className="cursor-pointer">
+            Mark as {isdone ? "not done" : "done"}
+          </Label>
+        </div>
+      )}
 
       <div className="flex justify-end gap-2">
         <DialogClose asChild>

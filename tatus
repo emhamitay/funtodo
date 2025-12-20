@@ -1,2 +1,0 @@
-[33me40a5f8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Enhance project structure and functionality by adding workspace support, improving .gitignore, and integrating local storage for task management. Updated package.json and package-lock.json for better dependency management. Enhanced user experience with toast notifications and improved login/register validation. Added new features in the client for task handling and information display.
-[33m2151150[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m first commit

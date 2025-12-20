@@ -2,23 +2,23 @@ import { mTask } from "@/models/mTask";
 import useTasksStore from "@/store/TasksStore";
 import CoreDialog from "./CoreDialog";
 
-export default function EditTaskDialog({ task, children , onEditComplete }) {
-  
+export default function EditTaskDialog({ task, children, onEditComplete }) {
   const originalTask = task;
   const taskParams = {
     name: originalTask.name,
     description: originalTask.description,
+    isdone: originalTask.isdone,
   };
 
   const editTask = useTasksStore((state) => state.editTask);
-  const handleSubmit = ({ name, description }) => {
+  const handleSubmit = ({ name, description, isdone }) => {
     //creating a new task object with all original fields
     const updatedTask = new mTask(
-      name, 
-      description, 
+      name,
+      description,
       originalTask.date,
       originalTask.id,
-      originalTask.isdone,
+      isdone,
       originalTask.priority
     );
     //update it on the store
