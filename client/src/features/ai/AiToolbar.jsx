@@ -32,7 +32,8 @@ export default function AiToolbar() {
     try {
       if (actions.create && actions.create.length > 0) {
         for (const taskData of actions.create) {
-          const dateToUse = createDateMode === "suggested" ? taskData.date || null : null;
+          const dateToUse =
+            createDateMode === "suggested" ? taskData.date || null : null;
           const newTask = new mTask(
             taskData.name,
             taskData.description || "",
@@ -189,7 +190,9 @@ export default function AiToolbar() {
               </div>
               <div className="flex gap-2">
                 <Button
-                  variant={createDateMode === "suggested" ? "default" : "outline"}
+                  variant={
+                    createDateMode === "suggested" ? "default" : "outline"
+                  }
                   size="sm"
                   onClick={() => setCreateDateMode("suggested")}
                 >
@@ -221,8 +224,7 @@ export default function AiToolbar() {
                           {" "}
                           - {task.description}
                         </span>
-                      )}
-                      {" "}
+                      )}{" "}
                       <span className="text-xs text-muted-foreground">
                         {task.date ? `(Due: ${task.date})` : "(Inbox)"}
                       </span>

@@ -41,7 +41,7 @@ async function askAI(question, userTasks = []) {
     console.error("AI Service error - Full details:", {
       message: err.message,
       stack: err.stack,
-      response: err.response?.data
+      response: err.response?.data,
     });
     throw new Error(`Failed to process AI request: ${err.message}`);
   }

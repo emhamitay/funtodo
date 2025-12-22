@@ -17,7 +17,7 @@ const aiController = async (req, res) => {
   } catch (error) {
     console.error("AI Controller error - Full details:", {
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
     res.status(500).json({
       success: false,
