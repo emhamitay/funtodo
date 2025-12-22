@@ -2,7 +2,7 @@ import Logo from "@/features/Logo";
 import Toolbar from "@/features/Toolbar";
 import Inbox from "@/features/Inbox";
 import { Separator } from "@/components/ui/separator";
-import AiToolbar from "./features/AiToolbar";
+import AiToolbar from "./features/ai/AiToolbar";
 import { TaskCalendar } from "./features/TaskCalendar";
 import { useState, useEffect } from "react";
 import TasksView from "@/features/TasksView";
@@ -19,10 +19,10 @@ function App() {
   // Selected date State
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isTutorialOn, setTutorialOn] = useState(true);
-  
+
   // Initialize store with local storage data
   const initialize = useTasksStore((state) => state.initialize);
-  
+
   useEffect(() => {
     initialize();
   }, []);
@@ -98,12 +98,7 @@ function App() {
           </main>
         </div>
       </DndProvider>
-      <Toaster 
-        position="top-center"
-        richColors
-        closeButton
-        duration={4000}
-      />
+      <Toaster position="top-center" richColors closeButton duration={4000} />
     </>
   );
 }

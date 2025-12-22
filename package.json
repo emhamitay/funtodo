@@ -8,8 +8,9 @@
   ],
   "scripts": {
     "dev:client": "cd client && npm run dev",
-    "dev": "npm run dev:client",
-    "install:all": "npm install && cd client && npm install",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently --kill-others-on-fail \"npm run dev:server\" \"npm run dev:client\"",
+    "install:all": "npm install && cd client && npm install && cd server && npm install",
     "build:client": "cd client && npm run build",
     "test:client": "cd client && npm test"
   },
