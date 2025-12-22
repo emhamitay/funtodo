@@ -28,7 +28,7 @@ const loadTasksFromLocalStorage = () => {
               taskData.date ? new Date(taskData.date) : null,
               taskData.id,
               taskData.isdone,
-              taskData.priority
+              taskData.groupIndex || 0
             )
         )
       : [];
@@ -254,6 +254,7 @@ const useTasksStore = create((set, get) => ({
             name: updatedTask.name,
             description: updatedTask.description,
             isdone: updatedTask.isdone,
+            date: updatedTask.date !== undefined ? updatedTask.date : task.date,
           };
         }
         return task;
@@ -274,6 +275,7 @@ const useTasksStore = create((set, get) => ({
             title: updatedTask.name,
             description: updatedTask.description,
             completed: updatedTask.isdone,
+            dueDate: updatedTask.date,
           }),
         });
 

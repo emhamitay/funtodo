@@ -11,7 +11,6 @@ export class mTask {
     date = null,
     id = null,
     isdone = false,
-    priority = "medium",
     groupIndex = 0
   ) {
     this.id = id || crypto.randomUUID();
@@ -20,18 +19,16 @@ export class mTask {
     this.isdone = isdone;
     this.date = date;
     this.groupIndex = groupIndex;
-    this.priority = priority;
   }
 
   // Static method to create from server data
   static fromServerData(serverTask) {
     return new mTask(
       serverTask.title, // Server uses 'title', frontend uses 'name'
-      serverTask.description || '',
+      serverTask.description || "",
       serverTask.dueDate ? new Date(serverTask.dueDate) : null,
       serverTask.id,
       serverTask.completed || serverTask.isDone, // Handle both 'completed' and 'isDone'
-      serverTask.priority,
       serverTask.groupIndex || 0
     );
   }
@@ -43,7 +40,6 @@ export class mTask {
       description: this.description,
       dueDate: this.date,
       completed: this.isdone,
-      priority: this.priority
     };
   }
 }

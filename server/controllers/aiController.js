@@ -1,12 +1,29 @@
 import aiService from "../services/aiService.js";
 
-const askQuestion = async (req, res) => {
+const aiController = async (req, res) => {
   try {
-    const { question } = req.body;
-    const answer = await aiService.ask(question);
-    res.json({ answer });
+    const { question, userTasks } = req.body;
+
+    if (!question || question.trim() === "") {
+      return res.status(400).json({ error: "Question cannot be empty" });
+    }
+
+    const answer = await aiService.askAI(question, userTasks || []);
+
+    res.json({
+      success: true,
+      data: answer,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Failed to get answer from AI service" });
+    console.error("AI Controller error - Full details:", {
+      message: error.message,
+      stack: error.stack
+    });
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to process AI request",
+    });
   }
 };
-export default { askQuestion };
+
+export default { aiController };
