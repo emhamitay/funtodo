@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import taskRoutes from "./routes/tasksRoute.js";
 import openaiRoutes from "./routes/aiRoute.js";
+import authRoutes from "./routes/authRoute.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/tasks/", taskRoutes);
 app.use("/api/openai/", openaiRoutes);
+app.use("/api/auth", authRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
