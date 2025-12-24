@@ -11,7 +11,7 @@ import { DndProvider, GhostLayer } from "bhi-dnd";
 import Tutorial from "@/lib/tutorial/Tutorial";
 import steps from "@/lib/tutorial/steps";
 import { Button } from "@/components/Button";
-import LoginFeature from "./features/login/LoginFeature";
+import LoginFeature from "./features/login/AuthenticationModal";
 import useTasksStore from "@/store/TasksStore";
 import { Toaster } from "sonner";
 

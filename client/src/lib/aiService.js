@@ -1,8 +1,8 @@
-const API_URL = import.meta.env.VITE_OPENAI_URL;
+const OPENAI_API_URL = import.meta.env.VITE_OPENAI_API_URL;
 
 const aiService = async ({ question, userTasks = [] }) => {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(OPENAI_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

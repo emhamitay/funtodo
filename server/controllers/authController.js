@@ -11,7 +11,6 @@ const authController = {
    * Admin-only endpoint to delete all users from the database.
    */
   Reset: async function Reset(req, res) {
-    console.log("Reset endpoint called");
     const { username, password } = req.body;
 
     const isValidAdminPassword = await bcrypt.compare(
@@ -21,12 +20,10 @@ const authController = {
 
     // Validate admin credentials before performing destructive action
     if (username !== process.env.ADMIN_USERNAME || !isValidAdminPassword) {
-      console.log("Unauthorized reset attempt");
       return res.sendStatus(403);
     }
 
     try {
-      console.log("Resetting all users...");
       await db.delete(users);
       console.log("All users have been reset by admin.");
       res.send("Reset successful");
@@ -64,18 +61,22 @@ const authController = {
       // Return 401 if password is invalid
       if (!isValid) return res.sendStatus(401);
 
-      // Generate JWT token with user ID, expires in 7 days
-      const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
-
       // Send token to client
-      res.json({ token });
+      const token = authController.generateToken(user);
+      res.status(200).json({ token: token, userId: user.id });
     } catch (error) {
       // Log error and return 500 status
       console.error("LoginUser error:", error);
       res.sendStatus(500);
     }
+  },
+
+  generateToken: (user) => {
+    // Generate JWT token with user ID, expires in 7 days
+    const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    return token;
   },
 
   /**
@@ -84,7 +85,6 @@ const authController = {
    * @param {Object} res - Express response object
    */
   RegisterUser: async function registerUser(req, res) {
-    console.log("RegisterUser called");
     try {
       // Extract username and password from request body
       const { username, password } = req.body;
@@ -97,7 +97,6 @@ const authController = {
         });
       }
 
-      console.log("Checking if user exists...");
       // Check if username already exists in database
       let existingUser = await db
         .select()
@@ -105,7 +104,6 @@ const authController = {
         .where(eq(users.username, username))
         .limit(1);
 
-      console.log("fetched existing user:", existingUser);
       // Return error if user already exists
       if (existingUser.length > 0) {
         return res.status(409).json({
@@ -114,20 +112,29 @@ const authController = {
         });
       }
 
-      console.log("Hashing password...");
       // Hash the password with salt rounds of 10
       const passwordHash = await bcrypt.hash(password, 10);
 
-      console.log("Inserting new user...");
       // Insert new user into database
-      await db.insert(users).values({
-        username: username,
-        passwordHash: passwordHash,
-      });
+      const inserted = await db
+        .insert(users)
+        .values({
+          username: username,
+          passwordHash: passwordHash,
+        })
+        .returning({ id: users.id });
+      console.log("Inserted user:", inserted);
+      const newUserId = inserted[0]?.id;
+      if (!newUserId) {
+        console.error("RegisterUser: failed to get new userId");
+        return res.sendStatus(500);
+      }
 
-      console.log("User registered successfully.");
+      const token = authController.generateToken({ userId: newUserId });
       // Return success response
-      return res.json({ success: true });
+      return res
+        .status(201)
+        .json({ success: true, userId: newUserId, token: token });
     } catch (error) {
       // Log error and return 500 status
       console.error("RegisterUser error:", error);

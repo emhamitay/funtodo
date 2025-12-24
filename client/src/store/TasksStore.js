@@ -2,6 +2,15 @@ import { create } from "zustand";
 import { mTask } from "@/models/mTask";
 import { toast } from "sonner";
 
+//getting environment variables
+const API_URL_TASKS_CREATE = import.meta.env.VITE_API_TASKS_CREATE;
+const API_URL_TASKS_GET_BY_USER_ID = import.meta.env
+  .VITE_API_TASKS_GET_BY_USER_ID;
+const API_URL_TASKS_UPDATE = import.meta.env.VITE_API_TASKS_UPDATE;
+const API_URL_TASKS_DELETE = import.meta.env.VITE_API_TASKS_DELETE;
+const API_URL_TASKS_TOGGLE_ISDONE = import.meta.env
+  .VITE_API_TASKS_TOGGLE_ISDONE;
+
 // Local storage keys
 const LOCAL_TASKS_KEY = "funtodo_local_tasks";
 const LOCAL_USER_ID_KEY = "funtodo_local_user_id";
@@ -100,10 +109,13 @@ const useTasksStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       console.log("Sending loadTasks request to server");
-      const response = await fetch(`/api/tasks/get?userId=${userId}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `${API_URL_TASKS_GET_BY_USER_ID}?userId=${userId}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -147,7 +159,7 @@ const useTasksStore = create((set, get) => ({
       let mergedCount = 0;
       // Send each local task to server
       for (const localTask of localTasks) {
-        const response = await fetch("/api/tasks/create", {
+        const response = await fetch(API_URL_TASKS_CREATE, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -206,7 +218,7 @@ const useTasksStore = create((set, get) => ({
     if (isOnline && userId) {
       try {
         console.log("Sending createTask request to server");
-        const response = await fetch("/api/tasks/create", {
+        const response = await fetch(API_URL_TASKS_CREATE, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -267,7 +279,7 @@ const useTasksStore = create((set, get) => ({
 
     if (isOnline && userId) {
       try {
-        const response = await fetch("/api/tasks/update", {
+        const response = await fetch(API_URL_TASKS_UPDATE, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -310,7 +322,7 @@ const useTasksStore = create((set, get) => ({
 
     if (isOnline && userId) {
       try {
-        const response = await fetch("/api/tasks/toggle", {
+        const response = await fetch(API_URL_TASKS_TOGGLE_ISDONE, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ taskId: task.id }),
@@ -349,7 +361,7 @@ const useTasksStore = create((set, get) => ({
 
     if (isOnline && userId) {
       try {
-        const response = await fetch("/api/tasks/delete", {
+        const response = await fetch(API_URL_TASKS_DELETE, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ taskId: taskToRemove.id }),
@@ -413,7 +425,7 @@ const useTasksStore = create((set, get) => ({
     if (isOnline && userId) {
       try {
         console.log("Sending moveTask request to server");
-        const response = await fetch("/api/tasks/update", {
+        const response = await fetch(API_URL_TASKS_UPDATE, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
