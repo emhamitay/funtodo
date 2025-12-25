@@ -94,9 +94,9 @@ export default function Register({
       email,
       password,
       // On Success callback
-      (userId) => {
+      (userId, token) => {
         toast.success("Registration successful! Welcome aboard.");
-        onRegisterSuccess(userId); // Pass userId to callback
+        onRegisterSuccess(userId, token); // Pass userId and token to parent
       },
       // On Error callback
       (message) => {

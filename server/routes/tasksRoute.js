@@ -1,32 +1,25 @@
 import { Router } from "express";
+import tasksController from "../controllers/tasksController.js";
+import authController from "../controllers/authController.js";
+
 const router = Router();
 
-router.get("/getByUserId", (req, res) => {
-  //query param userId
-  const { userId } = req.query;
+router.use(authController.authenticateTokenMiddleware);
 
-  // Logic to get tasks by user ID
-  res.json({ success: true, data: [] });
+router.get("/getByUserId", (req, res) => {
+  tasksController.GetTasksByUserId(req, res);
 });
 router.post("/create", (req, res) => {
-  const { userId, title, description, isDone } = req.body;
-  // Logic to create a new task
-  res.json({ success: true, data: { taskId: "newTaskId" } });
+  tasksController.CreateTask(req, res);
 });
 router.put("/update", (req, res) => {
-  const { taskId, title, description } = req.body;
-  // Logic to update a task
-  res.json({ success: true });
+  tasksController.UpdateTask(req, res);
 });
 router.delete("/delete", (req, res) => {
-  const { taskId } = req.body;
-  // Logic to delete a task
-  res.json({ success: true });
+  tasksController.DeleteTask(req, res);
 });
 router.post("/toggleIsDone", (req, res) => {
-  const { taskId, isDone } = req.body;
-  // Logic to toggle task completion status
-  res.json({ success: true });
+  tasksController.ToggleIsDone(req, res);
 });
 
 export default router;

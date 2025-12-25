@@ -36,7 +36,8 @@ const authService = {
       if (res.ok) {
         // Login successful - parse response and call success callback
         const data = await res.json();
-        onLoginSuccess(data.userId);
+        // Expect { token, userId }
+        onLoginSuccess(data.userId, data.token);
       } else {
         // Login failed - extract error message and call failure callback
         const data = await res.json();
@@ -70,7 +71,8 @@ const authService = {
       if (res.ok) {
         // Registration successful - parse response and call success callback
         const data = await res.json();
-        onRegisterSuccess(data.userId);
+        // Expect { success, userId, token }
+        onRegisterSuccess(data.userId, data.token);
       } else {
         // Registration failed - extract error message and call failure callback
         const data = await res.json();

@@ -1,14 +1,12 @@
 // Import required dependencies
 import bcrypt from "bcrypt";
-import { db } from "../db/client.js";
-import { users } from "../db/schema/user.js";
 import jwt from "jsonwebtoken";
-import { eq } from "drizzle-orm";
+import authService from "../services/authService.js";
 
 // Authentication controller with login and registration functions
 const authController = {
   /**
-   * Admin-only endpoint to delete all users from the database.
+   * Admin-only endpoint to delete all users & tasks from the database.
    */
   Reset: async function Reset(req, res) {
     const { username, password } = req.body;
@@ -23,14 +21,14 @@ const authController = {
       return res.sendStatus(403);
     }
 
-    try {
-      await db.delete(users);
-      console.log("All users have been reset by admin.");
-      res.send("Reset successful");
-    } catch (error) {
-      console.error("Reset error:", error);
-      res.sendStatus(500);
-    }
+    authService.Reset(
+      () => {
+        res.send("Resset successful");
+      },
+      () => {
+        res.sendStatus(500);
+      }
+    );
   },
 
   /**
@@ -43,15 +41,9 @@ const authController = {
       // Extract username and password from request body
       const { username, password } = req.body;
 
-      // Search for user in database by username
-      const user = (
-        await db
-          .select()
-          .from(users)
-          .where(eq(users.username, username))
-          .limit(1)
-      )[0];
-
+      //check if user exists
+      const user = await authService.getUserByUsername(username);
+      console.log("User fetched from DB:", user);
       // Return 401 if user not found
       if (!user) return res.sendStatus(401);
 
@@ -73,10 +65,22 @@ const authController = {
 
   generateToken: (user) => {
     // Generate JWT token with user ID, expires in 7 days
-    const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
     return token;
+  },
+
+  authenticateTokenMiddleware(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader?.split(" ")[1];
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
+      if (err || !payload?.userId) return res.sendStatus(403);
+      req.userId = payload.userId;
+      next();
+    });
   },
 
   /**
@@ -98,14 +102,10 @@ const authController = {
       }
 
       // Check if username already exists in database
-      let existingUser = await db
-        .select()
-        .from(users)
-        .where(eq(users.username, username))
-        .limit(1);
+      const isUsernameExists = await authService.isUsernameExists(username);
 
       // Return error if user already exists
-      if (existingUser.length > 0) {
+      if (isUsernameExists) {
         return res.status(409).json({
           success: false,
           message: "Username already exists",
@@ -116,25 +116,17 @@ const authController = {
       const passwordHash = await bcrypt.hash(password, 10);
 
       // Insert new user into database
-      const inserted = await db
-        .insert(users)
-        .values({
-          username: username,
-          passwordHash: passwordHash,
-        })
-        .returning({ id: users.id });
-      console.log("Inserted user:", inserted);
-      const newUserId = inserted[0]?.id;
-      if (!newUserId) {
+      const userId = await authService.Create(username, passwordHash);
+      if (!userId) {
         console.error("RegisterUser: failed to get new userId");
         return res.sendStatus(500);
       }
 
-      const token = authController.generateToken({ userId: newUserId });
+      const token = authController.generateToken({ id: userId });
       // Return success response
       return res
         .status(201)
-        .json({ success: true, userId: newUserId, token: token });
+        .json({ success: true, userId: userId, token: token });
     } catch (error) {
       // Log error and return 500 status
       console.error("RegisterUser error:", error);

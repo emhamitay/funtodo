@@ -48,7 +48,8 @@ export default function LoginFeature() {
     initialize();
     // Check if user was previously logged in
     const localUserId = localStorage.getItem("funtodo_local_user_id");
-    if (localUserId) {
+    const token = localStorage.getItem("funtodo_access_token");
+    if (localUserId && token) {
       setIsLoggedIn(true);
     }
   }, []);
@@ -60,6 +61,8 @@ export default function LoginFeature() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     clearTasks(); // Clear tasks from store and local storage
+    // Clear auth token
+    localStorage.removeItem("funtodo_access_token");
     toast.success("See you later! Your tasks are safe and sound locally.");
   };
 
@@ -68,10 +71,12 @@ export default function LoginFeature() {
    * Sets user ID, merges local tasks with server, and loads user's tasks
    * @param {string} userId - The authenticated user's ID
    */
-  const handleLoginSuccess = async (userId) => {
+  const handleLoginSuccess = async (userId, token) => {
     setIsLoggedIn(true);
     setPopupOpen(false);
     setUserId(userId);
+    // Persist bearer token for authenticated requests
+    localStorage.setItem("funtodo_access_token", token);
 
     // Merge local tasks with server tasks if any exist
     await mergeLocalTasks(userId);
@@ -85,10 +90,12 @@ export default function LoginFeature() {
    * Sets user ID, merges local tasks with server, and loads user's tasks
    * @param {string} userId - The newly registered user's ID
    */
-  const handleRegisterSuccess = async (userId) => {
+  const handleRegisterSuccess = async (userId, token) => {
     setIsLoggedIn(true);
     setPopupOpen(false);
     setUserId(userId);
+    // Persist bearer token for authenticated requests
+    localStorage.setItem("funtodo_access_token", token);
 
     // Merge local tasks with server tasks if any exist
     await mergeLocalTasks(userId);

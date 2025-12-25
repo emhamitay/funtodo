@@ -75,9 +75,9 @@ export default function Login({
       email,
       password,
       // On Success callback
-      (userId) => {
+      (userId, token) => {
         toast.success("Welcome back! You're all set.");
-        onLoginSuccess(userId); // Pass userId to callback
+        onLoginSuccess(userId, token); // Pass userId and token to parent
       },
       // On Error callback
       (message) => {
