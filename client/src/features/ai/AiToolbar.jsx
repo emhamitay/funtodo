@@ -20,6 +20,7 @@ export default function AiToolbar() {
   const [loading, setLoading] = useState(false);
   const [pendingChanges, setPendingChanges] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [applying, setApplying] = useState(false);
   const [createDateMode, setCreateDateMode] = useState("suggested"); // suggested | inbox
 
   const tasks = useTasksStore((state) => state.tasks);
@@ -27,13 +28,23 @@ export default function AiToolbar() {
   const editTask = useTasksStore((state) => state.editTask);
   const removeTask = useTasksStore((state) => state.removeTask);
 
+  // Normalize incoming date values from AI (string/Date/null -> Date|null)
+  const normalizeDateValue = (value) => {
+    if (value === undefined || value === null || value === "") return null;
+    if (value instanceof Date) return value;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  };
+
   // Apply AI-generated changes
   const applyAiActions = async (actions) => {
     try {
       if (actions.create && actions.create.length > 0) {
         for (const taskData of actions.create) {
           const dateToUse =
-            createDateMode === "suggested" ? taskData.date || null : null;
+            createDateMode === "suggested"
+              ? normalizeDateValue(taskData.date)
+              : null;
           const newTask = new mTask(
             taskData.name,
             taskData.description || "",
@@ -49,8 +60,14 @@ export default function AiToolbar() {
 
       if (actions.update && actions.update.length > 0) {
         for (const updateData of actions.update) {
-          const taskToUpdate = tasks.find((t) => t.id === updateData.id);
+          const taskToUpdate = tasks.find(
+            (t) => String(t.id) === String(updateData.id)
+          );
           if (taskToUpdate) {
+            const resolvedDate =
+              updateData.date === undefined
+                ? taskToUpdate.date
+                : normalizeDateValue(updateData.date);
             const updatedTask = new mTask(
               updateData.name !== undefined
                 ? updateData.name
@@ -58,10 +75,8 @@ export default function AiToolbar() {
               updateData.description !== undefined
                 ? updateData.description
                 : taskToUpdate.description,
-              updateData.date !== undefined
-                ? updateData.date
-                : taskToUpdate.date,
-              updateData.id,
+              resolvedDate,
+              taskToUpdate.id,
               updateData.isdone !== undefined
                 ? updateData.isdone
                 : taskToUpdate.isdone,
@@ -75,7 +90,9 @@ export default function AiToolbar() {
 
       if (actions.delete && actions.delete.length > 0) {
         for (const taskId of actions.delete) {
-          const taskToRemove = tasks.find((t) => t.id === taskId);
+          const taskToRemove = tasks.find(
+            (t) => String(t.id) === String(taskId)
+          );
           if (taskToRemove) {
             await removeTask(taskToRemove);
           }
@@ -99,7 +116,8 @@ export default function AiToolbar() {
 
       const response = await aiService({
         question: aiQuestion,
-        userTasks: tasks,
+        // Normalize IDs to strings so AI echoes them back consistently
+        userTasks: tasks.map((t) => ({ ...t, id: String(t.id) })),
       });
 
       // Show the AI message
@@ -130,17 +148,34 @@ export default function AiToolbar() {
   }
 
   const handleApproveChanges = async () => {
-    if (pendingChanges?.actions) {
-      await applyAiActions(pendingChanges.actions);
-      if (pendingChanges.summary) {
-        toast.success(pendingChanges.summary);
-      }
-    }
+    if (applying) return;
+    setApplying(true);
+
+    // Close dialog first to avoid showing "Unknown task" during deletion
     setShowPreview(false);
-    setPendingChanges(null);
+
+    // Show a loading toast
+    const loadingToast = toast.loading("Applying changes...");
+
+    try {
+      if (pendingChanges?.actions) {
+        await applyAiActions(pendingChanges.actions);
+        toast.dismiss(loadingToast);
+        if (pendingChanges.summary) {
+          toast.success(pendingChanges.summary);
+        }
+      }
+      setPendingChanges(null);
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error("Failed to apply changes");
+    } finally {
+      setApplying(false);
+    }
   };
 
   const handleRejectChanges = () => {
+    if (applying) return;
     toast.info("Changes cancelled");
     setShowPreview(false);
     setPendingChanges(null);
@@ -166,7 +201,7 @@ export default function AiToolbar() {
           className="flex-1"
           disabled={loading}
         />
-        <Button onClick={handleAskAi} disabled={loading}>
+        <Button onClick={handleAskAi} disabled={loading || applying}>
           {loading ? "Thinking..." : "Ask"}
         </Button>
       </div>
@@ -241,7 +276,9 @@ export default function AiToolbar() {
                 </h4>
                 <ul className="list-disc list-inside space-y-1">
                   {pendingChanges.actions.update.map((update, idx) => {
-                    const task = tasks.find((t) => t.id === update.id);
+                    const task = tasks.find(
+                      (t) => String(t.id) === String(update.id)
+                    );
                     return (
                       <li key={idx} className="text-sm">
                         {task?.name || "Unknown task"}
@@ -271,7 +308,7 @@ export default function AiToolbar() {
                 </h4>
                 <ul className="list-disc list-inside space-y-1">
                   {pendingChanges.actions.delete.map((id, idx) => {
-                    const task = tasks.find((t) => t.id === id);
+                    const task = tasks.find((t) => String(t.id) === String(id));
                     return (
                       <li key={idx} className="text-sm text-red-600">
                         {task?.name || "Unknown task"}
@@ -290,11 +327,29 @@ export default function AiToolbar() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={handleRejectChanges}>
+            <Button
+              variant="outline"
+              onClick={handleRejectChanges}
+              disabled={applying}
+            >
               Cancel
             </Button>
-            <Button onClick={handleApproveChanges} autoFocus>
-              Apply Changes
+            <Button
+              onClick={handleApproveChanges}
+              autoFocus
+              disabled={applying}
+            >
+              {applying ? (
+                <span className="inline-flex items-center gap-2">
+                  <span
+                    className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+                    aria-hidden="true"
+                  ></span>
+                  Applying...
+                </span>
+              ) : (
+                "Apply Changes"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
