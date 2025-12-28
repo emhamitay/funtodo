@@ -18,8 +18,11 @@ router.put("/update", (req, res) => {
 router.delete("/delete", (req, res) => {
   tasksController.DeleteTask(req, res);
 });
-router.post("/toggleIsDone", (req, res) => {
+router.put("/toggleIsDone", (req, res) => {
   tasksController.ToggleIsDone(req, res);
+});
+router.put("/moveTask", (req, res) => {
+  tasksController.MoveTask(req, res);
 });
 
 export default router;

@@ -36,12 +36,17 @@ const authService = {
       if (res.ok) {
         // Login successful - parse response and call success callback
         const data = await res.json();
-        // Expect { token, userId }
-        onLoginSuccess(data.userId, data.token);
+        // Persist JWT token for authenticated requests
+        if (data.token) {
+          try {
+            localStorage.setItem("funtodo_auth_token", data.token);
+          } catch (_) {}
+        }
+        onLoginSuccess(data.userId);
       } else {
         // Login failed - extract error message and call failure callback
         const data = await res.json();
-        onFail("Login failed: " + (data.error || "Unknown error"));
+        onFail(data.message || "Login failed: Unknown error");
       }
     } catch (err) {
       // Network or parsing error - call failure callback with error message
@@ -71,12 +76,17 @@ const authService = {
       if (res.ok) {
         // Registration successful - parse response and call success callback
         const data = await res.json();
-        // Expect { success, userId, token }
-        onRegisterSuccess(data.userId, data.token);
+        // Persist JWT token for authenticated requests
+        if (data.token) {
+          try {
+            localStorage.setItem("funtodo_auth_token", data.token);
+          } catch (_) {}
+        }
+        onRegisterSuccess(data.userId);
       } else {
         // Registration failed - extract error message and call failure callback
         const data = await res.json();
-        onFail("Registration failed: " + (data.error || "Unknown error"));
+        onFail(data.message || "Registration failed: Unknown error");
       }
     } catch (err) {
       // Network or parsing error - call failure callback with error message

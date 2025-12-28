@@ -10,11 +10,12 @@ const API_URL_TASKS_UPDATE = import.meta.env.VITE_API_TASKS_UPDATE;
 const API_URL_TASKS_DELETE = import.meta.env.VITE_API_TASKS_DELETE;
 const API_URL_TASKS_TOGGLE_ISDONE = import.meta.env
   .VITE_API_TASKS_TOGGLE_ISDONE;
+const API_URL_TASKS_MOVE_TASK = import.meta.env.VITE_API_TASKS_MOVE_TASK;
 
 // Local storage keys
 const LOCAL_TASKS_KEY = "funtodo_local_tasks";
 const LOCAL_USER_ID_KEY = "funtodo_local_user_id";
-const LOCAL_AUTH_TOKEN_KEY = "funtodo_access_token"; // Bearer token for API auth
+const LOCAL_AUTH_TOKEN_KEY = "funtodo_auth_token";
 
 // Helper function to save tasks to local storage
 const saveTasksToLocalStorage = (tasks) => {
@@ -67,7 +68,7 @@ const loadUserIdFromLocalStorage = () => {
   }
 };
 
-// Helper to load bearer token from local storage
+// Helper to load JWT auth token
 const loadAuthTokenFromLocalStorage = () => {
   try {
     return localStorage.getItem(LOCAL_AUTH_TOKEN_KEY);
@@ -87,13 +88,12 @@ const useTasksStore = create((set, get) => ({
   // Initialize store with local storage data
   initialize: () => {
     const localUserId = loadUserIdFromLocalStorage();
-    const token = loadAuthTokenFromLocalStorage();
     const localTasks = loadTasksFromLocalStorage();
 
     set({
       tasks: localTasks,
       userId: localUserId,
-      isOnline: !!localUserId && !!token,
+      isOnline: !!localUserId,
     });
   },
 
@@ -110,7 +110,6 @@ const useTasksStore = create((set, get) => ({
   // Load tasks from server or local storage
   loadTasks: async (userId) => {
     console.log("loadTasks called with userId:", userId);
-    const token = loadAuthTokenFromLocalStorage();
 
     if (!userId) {
       console.log("No userId provided, loading from local storage");
@@ -122,23 +121,21 @@ const useTasksStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       console.log("Sending loadTasks request to server");
-      const response = await fetch(
-        `${API_URL_TASKS_GET_BY_USER_ID}?userId=${userId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        }
-      );
+      const token = loadAuthTokenFromLocalStorage();
+      const response = await fetch(`${API_URL_TASKS_GET_BY_USER_ID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
         console.log("loadTasks server response:", data);
         const tasks = data.tasks.map((task) => mTask.fromServerData(task));
         console.log("Parsed tasks:", tasks);
-        set({ tasks, userId, isOnline: !!token });
+        set({ tasks, userId, isOnline: true });
         console.log("Tasks loaded successfully from server");
       } else {
         console.error(
@@ -163,7 +160,6 @@ const useTasksStore = create((set, get) => ({
   mergeLocalTasks: async (userId) => {
     const { tasks } = get();
     const localTasks = loadTasksFromLocalStorage();
-    const token = loadAuthTokenFromLocalStorage();
 
     if (localTasks.length === 0) {
       console.log("No local tasks to merge");
@@ -178,10 +174,7 @@ const useTasksStore = create((set, get) => ({
       for (const localTask of localTasks) {
         const response = await fetch(API_URL_TASKS_CREATE, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             userId,
             title: localTask.name,
@@ -223,7 +216,6 @@ const useTasksStore = create((set, get) => ({
   createTask: async (task) => {
     const { tasks, userId, isOnline } = get();
     console.log("createTask called with:", { task, userId, isOnline });
-    const token = loadAuthTokenFromLocalStorage();
 
     // Create new task with proper group index
     const relevantGroup = tasks.filter((t) => isSameGroup(t.date, task.date));
@@ -239,6 +231,7 @@ const useTasksStore = create((set, get) => ({
     if (isOnline && userId) {
       try {
         console.log("Sending createTask request to server");
+        const token = loadAuthTokenFromLocalStorage();
         const response = await fetch(API_URL_TASKS_CREATE, {
           method: "POST",
           headers: {
@@ -246,22 +239,24 @@ const useTasksStore = create((set, get) => ({
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            userId,
             title: task.name,
             description: task.description,
-            dueDate: task.date,
-            priority: task.priority,
+            date: task.date,
+            isDone: task.isdone,
           }),
         });
 
         if (response.ok) {
           const data = await response.json();
           console.log("createTask server response:", data);
-          // Update task with server ID if needed
-          const updatedTask = mTask.fromServerData(data.task);
-          set((state) => ({
-            tasks: state.tasks.map((t) => (t.id === task.id ? updatedTask : t)),
-          }));
+          // Server returns { message, taskId }
+          if (data.taskId) {
+            set((state) => ({
+              tasks: state.tasks.map((t) =>
+                t.id === task.id ? { ...t, id: data.taskId } : t
+              ),
+            }));
+          }
           console.log("Task created successfully on server");
         } else {
           console.error("Failed to create task on server, keeping local only");
@@ -280,7 +275,6 @@ const useTasksStore = create((set, get) => ({
   // Edit name/description of a task by index and sync with server or save locally
   editTask: async (updatedTask) => {
     const { tasks, userId, isOnline } = get();
-    const token = loadAuthTokenFromLocalStorage();
 
     // Update local state immediately
     set((state) => {
@@ -304,6 +298,7 @@ const useTasksStore = create((set, get) => ({
 
     if (isOnline && userId) {
       try {
+        const token = loadAuthTokenFromLocalStorage();
         const response = await fetch(API_URL_TASKS_UPDATE, {
           method: "PUT",
           headers: {
@@ -311,11 +306,11 @@ const useTasksStore = create((set, get) => ({
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            taskId: updatedTask.id,
+            id: updatedTask.id,
             title: updatedTask.name,
             description: updatedTask.description,
-            completed: updatedTask.isdone,
-            dueDate: updatedTask.date,
+            isDone: updatedTask.isdone,
+            date: updatedTask.date,
           }),
         });
 
@@ -334,7 +329,6 @@ const useTasksStore = create((set, get) => ({
   // Toggle task completion status and sync with server or save locally
   updateIsDone: async (task, value) => {
     const { userId, isOnline } = get();
-    const token = loadAuthTokenFromLocalStorage();
 
     // Update local state immediately
     set((state) => {
@@ -351,13 +345,14 @@ const useTasksStore = create((set, get) => ({
 
     if (isOnline && userId) {
       try {
+        const token = loadAuthTokenFromLocalStorage();
         const response = await fetch(API_URL_TASKS_TOGGLE_ISDONE, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({ taskId: task.id }),
+          body: JSON.stringify({ id: task.id }),
         });
 
         if (!response.ok) {
@@ -375,7 +370,6 @@ const useTasksStore = create((set, get) => ({
   // Remove task by index and sync with server or save locally
   removeTask: async (taskToRemove) => {
     const { userId, isOnline } = get();
-    const token = loadAuthTokenFromLocalStorage();
 
     // Update local state immediately
     set((state) => {
@@ -394,13 +388,14 @@ const useTasksStore = create((set, get) => ({
 
     if (isOnline && userId) {
       try {
+        const token = loadAuthTokenFromLocalStorage();
         const response = await fetch(API_URL_TASKS_DELETE, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({ taskId: taskToRemove.id }),
+          body: JSON.stringify({ id: taskToRemove.id }),
         });
 
         if (!response.ok) {
@@ -419,7 +414,6 @@ const useTasksStore = create((set, get) => ({
   moveTask: async (id, newDate) => {
     const { tasks, userId, isOnline } = get();
     console.log("moveTask called with:", { id, newDate, userId, isOnline });
-    const token = loadAuthTokenFromLocalStorage();
 
     const taskToMove = tasks.find((t) => t.id === id);
     if (!taskToMove) {
@@ -462,19 +456,31 @@ const useTasksStore = create((set, get) => ({
     if (isOnline && userId) {
       try {
         console.log("Sending moveTask request to server");
-        const response = await fetch(API_URL_TASKS_UPDATE, {
+        const token = loadAuthTokenFromLocalStorage();
+
+        // Format date to YYYY-MM-DD to avoid timezone issues
+        // If newDate is null, keep it null
+        const formattedDate = newDate
+          ? new Date(newDate.getTime() - newDate.getTimezoneOffset() * 60000)
+              .toISOString()
+              .split("T")[0]
+          : null;
+
+        const response = await fetch(API_URL_TASKS_MOVE_TASK, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
-            taskId: id,
-            dueDate: newDate,
+            id,
+            date: formattedDate,
           }),
         });
 
-        if (!response.ok) {
+        if (response.ok) {
+          console.log("Task moved successfully on server");
+        } else {
           console.error("Failed to move task on server, keeping local only");
         }
       } catch (error) {

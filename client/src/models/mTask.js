@@ -26,7 +26,7 @@ export class mTask {
     return new mTask(
       serverTask.title, // Server uses 'title', frontend uses 'name'
       serverTask.description || "",
-      serverTask.dueDate ? new Date(serverTask.dueDate) : null,
+      serverTask.date ? new Date(serverTask.date) : null, // Server sends 'date', not 'dueDate'
       serverTask.id,
       serverTask.completed || serverTask.isDone, // Handle both 'completed' and 'isDone'
       serverTask.groupIndex || 0

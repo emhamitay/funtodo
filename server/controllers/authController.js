@@ -1,138 +1,135 @@
-// Import required dependencies
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authService from "../services/authService.js";
 
-// Authentication controller with login and registration functions
 const authController = {
   /**
-   * Admin-only endpoint to delete all users & tasks from the database.
+   * Admin-only endpoint to delete all users & tasks from the database
    */
-  Reset: async function Reset(req, res) {
+  Reset: async (req, res) => {
     const { username, password } = req.body;
 
-    const isValidAdminPassword = await bcrypt.compare(
-      password,
-      process.env.ADMIN_PASSWORD_HASH
-    );
-
-    // Validate admin credentials before performing destructive action
-    if (username !== process.env.ADMIN_USERNAME || !isValidAdminPassword) {
-      return res.sendStatus(403);
-    }
-
-    authService.Reset(
-      () => {
-        res.send("Resset successful");
-      },
-      () => {
-        res.sendStatus(500);
-      }
-    );
-  },
-
-  /**
-   * Authenticates a user and returns a JWT token
-   * @param {Object} req - Express request object containing username and password
-   * @param {Object} res - Express response object
-   */
-  LoginUser: async function LoginUser(req, res) {
     try {
-      // Extract username and password from request body
-      const { username, password } = req.body;
+      const isValidAdminPassword = await bcrypt.compare(
+        password,
+        process.env.ADMIN_PASSWORD_HASH
+      );
 
-      //check if user exists
-      const user = await authService.getUserByUsername(username);
-      console.log("User fetched from DB:", user);
-      // Return 401 if user not found
-      if (!user) return res.sendStatus(401);
+      if (username !== process.env.ADMIN_USERNAME || !isValidAdminPassword) {
+        return res.sendStatus(403);
+      }
 
-      // Compare provided password with stored hash
-      const isValid = await bcrypt.compare(password, user.passwordHash);
-
-      // Return 401 if password is invalid
-      if (!isValid) return res.sendStatus(401);
-
-      // Send token to client
-      const token = authController.generateToken(user);
-      res.status(200).json({ token: token, userId: user.id });
+      await authService.Reset();
+      res.status(200).send("Reset successful");
     } catch (error) {
-      // Log error and return 500 status
-      console.error("LoginUser error:", error);
+      console.error("Reset error:", error);
       res.sendStatus(500);
     }
   },
 
-  generateToken: (user) => {
-    // Generate JWT token with user ID, expires in 7 days
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    return token;
+  /**
+   * Authenticate user and return JWT token
+   */
+  LoginUser: async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and password are required",
+      });
+    }
+
+    try {
+      const user = await authService.getUserByUsername(username);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User does not exist",
+        });
+      }
+
+      const isValid = await bcrypt.compare(password, user.passwordHash);
+      if (!isValid) {
+        return res.status(401).json({
+          success: false,
+          message: "Incorrect password",
+        });
+      }
+
+      const token = authController.generateToken(user);
+      res.status(200).json({ token, userId: user.id });
+    } catch (error) {
+      console.error("LoginUser error:", error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
   },
 
-  authenticateTokenMiddleware(req, res, next) {
+  /**
+   * Generate JWT token for a user
+   */
+  generateToken: (user) => {
+    return jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+  },
+
+  /**
+   * Middleware to authenticate JWT token
+   */
+  authenticateTokenMiddleware: (req, res, next) => {
+    console.log("Authenticating token for request:", req.path);
     const authHeader = req.headers["authorization"];
     const token = authHeader?.split(" ")[1];
     if (!token) return res.sendStatus(401);
 
     jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
-      if (err || !payload?.userId) return res.sendStatus(403);
+      if (err || !payload?.userId) {
+        console.log("JWT verification failed:", err);
+        return res.sendStatus(403);
+      }
       req.userId = payload.userId;
+      console.log("Authenticated userId:", req.userId);
       next();
     });
   },
 
   /**
-   * Registers a new user with validation
-   * @param {Object} req - Express request object containing username and password
-   * @param {Object} res - Express response object
+   * Register new user
    */
-  RegisterUser: async function registerUser(req, res) {
+  RegisterUser: async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and password are required",
+      });
+    }
+
     try {
-      // Extract username and password from request body
-      const { username, password } = req.body;
-
-      // Validate that username and password are provided
-      if (!username || !password) {
-        return res.status(400).json({
-          success: false,
-          message: "Username and password are required",
-        });
-      }
-
-      // Check if username already exists in database
-      const isUsernameExists = await authService.isUsernameExists(username);
-
-      // Return error if user already exists
-      if (isUsernameExists) {
+      const exists = await authService.isUsernameExists(username);
+      if (exists) {
         return res.status(409).json({
           success: false,
-          message: "Username already exists",
+          message: "Username is already taken",
         });
       }
 
-      // Hash the password with salt rounds of 10
       const passwordHash = await bcrypt.hash(password, 10);
-
-      // Insert new user into database
       const userId = await authService.Create(username, passwordHash);
+
       if (!userId) {
-        console.error("RegisterUser: failed to get new userId");
+        console.error("Failed to create user in DB");
         return res.sendStatus(500);
       }
 
       const token = authController.generateToken({ id: userId });
-      // Return success response
-      return res
-        .status(201)
-        .json({ success: true, userId: userId, token: token });
+      res.status(201).json({ success: true, userId, token });
     } catch (error) {
-      // Log error and return 500 status
       console.error("RegisterUser error:", error);
       res.sendStatus(500);
     }
-    console.log("RegisterUser function execution completed.");
   },
 };
 

@@ -1,40 +1,56 @@
 import { db } from "../db/client.js";
-import { users } from "../db/schema/user.js";
+import { users } from "../db/schema/users.js";
+import { tasks } from "../db/schema/tasks.js";
 import { eq } from "drizzle-orm";
 
 const authService = {
-  Reset: async (onSuccess, onFail) => {
+  /**
+   * Admin-only: delete all users and tasks
+   */
+  Reset: async () => {
     try {
       await db.delete(users);
-      console.log("All users have been reset by admin.");
-      onSuccess();
+      await db.delete(tasks);
+      console.log("All users and tasks have been reset by admin.");
     } catch (error) {
       console.error("Reset error:", error);
-      onFail();
+      throw error;
     }
   },
-  Create: async (username, passwordJash) => {
-    const inserted = await db
-      .insert(users)
-      .values({
-        username: username,
-        passwordHash: passwordJash,
-      })
-      .returning({ id: users.id });
-    return inserted[0]?.id;
+
+  /**
+   * Create new user
+   */
+  Create: async (username, passwordHash) => {
+    try {
+      const inserted = await db
+        .insert(users)
+        .values({ username, passwordHash })
+        .returning({ id: users.id });
+      return inserted[0]?.id ?? null;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
   },
+
+  /**
+   * Check if username exists
+   */
   isUsernameExists: async (username) => {
-    let existingUser = await db
+    const existingUser = await db
       .select()
       .from(users)
       .where(eq(users.username, username))
       .limit(1);
-    return existingUser.length > 0 ? true : false;
+    return existingUser.length > 0;
   },
+
+  /**
+   * Get user by username
+   */
   getUserByUsername: async (username) => {
     try {
-      console.log("Checking existence of user:", username);
-      // Search for user in database by username
       const user = (
         await db
           .select()
@@ -42,13 +58,12 @@ const authService = {
           .where(eq(users.username, username))
           .limit(1)
       )[0];
-
-      console.log("Fetched user:", user);
-
-      return user;
-    } catch {
-      console.log("failed checking if the user exist");
+      return user || null;
+    } catch (error) {
+      console.error("Error fetching user by username:", error);
+      throw error;
     }
   },
 };
+
 export default authService;
