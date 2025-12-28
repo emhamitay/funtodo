@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 
 //REGISTER API CALL
-import authService from "@/lib/authService";
+import authService from "../../../services/authService";
 
 export default function Register({
   setRegisterOpen,

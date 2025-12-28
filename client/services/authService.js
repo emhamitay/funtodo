@@ -2,15 +2,13 @@
  * Authentication Service
  *
  * Handles user authentication requests to the backend API.
- * Uses environment variables for API endpoints (VITE_API_USERS_LOGIN, VITE_API_USERS_REGISTER).
+ * Uses centralized API endpoints from api.js.
  *
  * NOTE: This service uses callback functions (onLoginSuccess, onFail) for handling responses.
  * Consider updating to use Promise-based returns for better integration with modern React patterns.
  */
 
-// Load API endpoints from environment variables
-const API_USERS_LOGIN_URL = import.meta.env.VITE_API_USERS_LOGIN;
-const API_USERS_REGISTER_URL = import.meta.env.VITE_API_USERS_REGISTER;
+import { USERS_LOGIN, USERS_REGISTER } from "./api.js";
 
 const authService = {
   /**
@@ -27,7 +25,7 @@ const authService = {
   Login: async (username, password, onLoginSuccess, onFail) => {
     try {
       // Send login request to backend
-      const res = await fetch(API_USERS_LOGIN_URL, {
+      const res = await fetch(USERS_LOGIN, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -68,7 +66,7 @@ const authService = {
   Register: async (username, password, onRegisterSuccess, onFail) => {
     try {
       // Send registration request to backend
-      const res = await fetch(API_USERS_REGISTER_URL, {
+      const res = await fetch(USERS_REGISTER, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

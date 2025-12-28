@@ -1,16 +1,22 @@
 import { create } from "zustand";
 import { mTask } from "@/models/mTask";
 import { toast } from "sonner";
+import {
+  TASKS_CREATE,
+  TASKS_GET_BY_USER_ID,
+  TASKS_UPDATE,
+  TASKS_DELETE,
+  TASKS_TOGGLE_ISDONE,
+  TASKS_MOVE_TASK,
+} from "../../services/api.js";
 
-//getting environment variables
-const API_URL_TASKS_CREATE = import.meta.env.VITE_API_TASKS_CREATE;
-const API_URL_TASKS_GET_BY_USER_ID = import.meta.env
-  .VITE_API_TASKS_GET_BY_USER_ID;
-const API_URL_TASKS_UPDATE = import.meta.env.VITE_API_TASKS_UPDATE;
-const API_URL_TASKS_DELETE = import.meta.env.VITE_API_TASKS_DELETE;
-const API_URL_TASKS_TOGGLE_ISDONE = import.meta.env
-  .VITE_API_TASKS_TOGGLE_ISDONE;
-const API_URL_TASKS_MOVE_TASK = import.meta.env.VITE_API_TASKS_MOVE_TASK;
+// Assign API endpoints from centralized api.js
+const API_URL_TASKS_CREATE = TASKS_CREATE;
+const API_URL_TASKS_GET_BY_USER_ID = TASKS_GET_BY_USER_ID;
+const API_URL_TASKS_UPDATE = TASKS_UPDATE;
+const API_URL_TASKS_DELETE = TASKS_DELETE;
+const API_URL_TASKS_TOGGLE_ISDONE = TASKS_TOGGLE_ISDONE;
+const API_URL_TASKS_MOVE_TASK = TASKS_MOVE_TASK;
 
 // Local storage keys
 const LOCAL_TASKS_KEY = "funtodo_local_tasks";
