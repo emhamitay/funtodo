@@ -37,6 +37,7 @@ export default function Register({
   const [email, setEmail] = useState(""); // User's email input
   const [password, setPassword] = useState(""); // User's password input
   const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
+  const [isLoading, setIsLoading] = useState(false); // Track in-flight registration
 
   /**
    * Validate email format using regex
@@ -90,16 +91,24 @@ export default function Register({
       return;
     }
 
+    // Show a loading toast similar to AI suggestion flow
+    setIsLoading(true);
+    const loadingToast = toast.loading("Creating your account...");
+
     authService.Register(
       email,
       password,
       // On Success callback
       (userId) => {
+        toast.dismiss(loadingToast);
+        setIsLoading(false);
         toast.success("Registration successful! Welcome aboard.");
         onRegisterSuccess(userId); // Pass userId to callback
       },
       // On Error callback
       (message) => {
+        toast.dismiss(loadingToast);
+        setIsLoading(false);
         toast.error(message);
       }
     );
@@ -147,8 +156,12 @@ export default function Register({
                 </button>
               </div>
             </div>
-            <Button className="w-full" onClick={handleSubmit}>
-              Register
+            <Button
+              className="w-full"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? "Registering..." : "Register"}
             </Button>
           </form>
           <Separator className="bg-blue-200" />

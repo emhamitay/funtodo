@@ -74,10 +74,18 @@ export default function LoginFeature() {
     setUserId(userId);
 
     // Merge local tasks with server tasks if any exist
-    await mergeLocalTasks(userId);
+    const syncingToast = toast.loading("Syncing your tasks...");
+    try {
+      await mergeLocalTasks(userId);
 
-    // Load tasks from server
-    await loadTasks(userId);
+      // Load tasks from server
+      await loadTasks(userId);
+      toast.dismiss(syncingToast);
+      toast.success("All set! Your tasks are up to date.");
+    } catch (err) {
+      toast.dismiss(syncingToast);
+      toast.error("Sync issue: working offline with local tasks");
+    }
   };
 
   /**
@@ -91,10 +99,18 @@ export default function LoginFeature() {
     setUserId(userId);
 
     // Merge local tasks with server tasks if any exist
-    await mergeLocalTasks(userId);
+    const syncingToast = toast.loading("Setting up your space...");
+    try {
+      await mergeLocalTasks(userId);
 
-    // Load tasks from server
-    await loadTasks(userId);
+      // Load tasks from server
+      await loadTasks(userId);
+      toast.dismiss(syncingToast);
+      toast.success("Welcome! Your tasks are synced.");
+    } catch (err) {
+      toast.dismiss(syncingToast);
+      toast.error("Setup issue: working offline with local tasks");
+    }
   };
 
   return (

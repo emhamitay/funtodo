@@ -10,3 +10,17 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## UX: Loading Feedback
+
+The app uses [sonner](https://sonner.emilkowal.ski/) to display non-blocking loading toasts for long operations:
+
+- Login: shows "Signing you in..." and dismisses on success/error.
+- Registration: shows "Creating your account..." and dismisses on success/error.
+- Post-auth sync: after login/registration, a toast indicates task syncing while local tasks merge and server tasks load.
+
+You can adjust messages or disable buttons during loading in:
+
+- `src/features/login/LoginForm.jsx`
+- `src/features/login/RegisterForm.jsx`
+- `src/features/login/AuthenticationModal.jsx`

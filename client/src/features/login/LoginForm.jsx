@@ -34,6 +34,7 @@ export default function Login({
   const [email, setEmail] = useState(""); // User's email input
   const [password, setPassword] = useState(""); // User's password input
   const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
+  const [isLoading, setIsLoading] = useState(false); // Track in-flight login
 
   /**
    * Validate email format using regex
@@ -71,16 +72,24 @@ export default function Login({
       return;
     }
 
+    // Show a loading toast similar to AI suggestion flow
+    setIsLoading(true);
+    const loadingToast = toast.loading("Signing you in...");
+
     authService.Login(
       email,
       password,
       // On Success callback
       (userId) => {
+        toast.dismiss(loadingToast);
+        setIsLoading(false);
         toast.success("Welcome back! You're all set.");
         onLoginSuccess(userId); // Pass userId to callback
       },
       // On Error callback
       (message) => {
+        toast.dismiss(loadingToast);
+        setIsLoading(false);
         toast.error(message);
       }
     );
@@ -128,8 +137,12 @@ export default function Login({
                 </button>
               </div>
             </div>
-            <Button className="w-full" onClick={handleLogin}>
-              Login
+            <Button
+              className="w-full"
+              onClick={handleLogin}
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Login"}
             </Button>
           </form>
           <Separator className="bg-blue-200" />
