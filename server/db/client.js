@@ -1,4 +1,9 @@
-// db/client.js
+/**
+ * Drizzle + Postgres Client
+ *
+ * Connects to Postgres using `DATABASE_URL` and exposes a Drizzle
+ * ORM instance for queries and mutations.
+ */
 import postgres from "postgres"; // Client for Postgres
 import { drizzle } from "drizzle-orm/postgres-js"; // Drizzle ORM for Postgres
 

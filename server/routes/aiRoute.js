@@ -1,3 +1,8 @@
+/**
+ * AI Routes
+ *
+ * POST /ask - Ask AI for suggestions with optional task context.
+ */
 import { Router } from "express";
 import aiController from "../controllers/aiController.js";
 

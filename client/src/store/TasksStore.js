@@ -1,3 +1,11 @@
+/**
+ * TasksStore (Zustand)
+ *
+ * Central state management for tasks with local storage fallback and
+ * server synchronization. Provides CRUD operations and utilities such as
+ * moving tasks between date groups. Each method documents online vs offline
+ * behavior and side-effects (e.g., toasts, localStorage persistence).
+ */
 import { create } from "zustand";
 import { mTask } from "@/models/mTask";
 import { toast } from "sonner";
@@ -23,7 +31,7 @@ const LOCAL_TASKS_KEY = "funtodo_local_tasks";
 const LOCAL_USER_ID_KEY = "funtodo_local_user_id";
 const LOCAL_AUTH_TOKEN_KEY = "funtodo_auth_token";
 
-// Helper function to save tasks to local storage
+/** Save tasks to local storage */
 const saveTasksToLocalStorage = (tasks) => {
   try {
     localStorage.setItem(LOCAL_TASKS_KEY, JSON.stringify(tasks));
@@ -32,7 +40,7 @@ const saveTasksToLocalStorage = (tasks) => {
   }
 };
 
-// Helper function to load tasks from local storage
+/** Load tasks from local storage */
 const loadTasksFromLocalStorage = () => {
   try {
     const stored = localStorage.getItem(LOCAL_TASKS_KEY);
@@ -55,7 +63,7 @@ const loadTasksFromLocalStorage = () => {
   }
 };
 
-// Helper function to save user ID to local storage
+/** Save user ID to local storage */
 const saveUserIdToLocalStorage = (userId) => {
   try {
     localStorage.setItem(LOCAL_USER_ID_KEY, userId);
@@ -64,7 +72,7 @@ const saveUserIdToLocalStorage = (userId) => {
   }
 };
 
-// Helper function to load user ID from local storage
+/** Load user ID from local storage */
 const loadUserIdFromLocalStorage = () => {
   try {
     return localStorage.getItem(LOCAL_USER_ID_KEY);
@@ -74,7 +82,7 @@ const loadUserIdFromLocalStorage = () => {
   }
 };
 
-// Helper to load JWT auth token
+/** Load JWT auth token from local storage */
 const loadAuthTokenFromLocalStorage = () => {
   try {
     return localStorage.getItem(LOCAL_AUTH_TOKEN_KEY);
@@ -84,14 +92,17 @@ const loadAuthTokenFromLocalStorage = () => {
   }
 };
 
-// Zustand store for managing task list with server synchronization and local storage fallback
+/**
+ * Create the tasks store.
+ * @returns {object} Store with state and actions
+ */
 const useTasksStore = create((set, get) => ({
   tasks: [],
   userId: null,
   isLoading: false,
   isOnline: false, // Track if user is logged in
 
-  // Initialize store with local storage data
+  /** Initialize store with local storage data */
   initialize: () => {
     const localUserId = loadUserIdFromLocalStorage();
     const localTasks = loadTasksFromLocalStorage();
@@ -103,7 +114,10 @@ const useTasksStore = create((set, get) => ({
     });
   },
 
-  // Set user ID when logged in
+  /**
+   * Set the user ID and update online state.
+   * @param {string|null} userId
+   */
   setUserId: (userId) => {
     set({ userId, isOnline: !!userId });
     if (userId) {
@@ -113,7 +127,10 @@ const useTasksStore = create((set, get) => ({
     }
   },
 
-  // Load tasks from server or local storage
+  /**
+   * Load tasks from server if `userId` present; otherwise, from local storage.
+   * @param {string|null} userId
+   */
   loadTasks: async (userId) => {
     console.log("loadTasks called with userId:", userId);
 
@@ -162,7 +179,11 @@ const useTasksStore = create((set, get) => ({
     }
   },
 
-  // Merge local tasks with server tasks when user logs in
+  /**
+   * Merge tasks stored locally into the server for the given `userId`.
+   * Clears local storage upon successful merge and shows user feedback.
+   * @param {string} userId
+   */
   mergeLocalTasks: async (userId) => {
     const { tasks } = get();
     const localTasks = loadTasksFromLocalStorage();
@@ -218,7 +239,10 @@ const useTasksStore = create((set, get) => ({
     }
   },
 
-  // Create a new task and sync with server or save locally
+  /**
+   * Create a new task and push to server if online; otherwise, keep locally.
+   * @param {mTask} task
+   */
   createTask: async (task) => {
     const { tasks, userId, isOnline } = get();
     console.log("createTask called with:", { task, userId, isOnline });
@@ -278,7 +302,10 @@ const useTasksStore = create((set, get) => ({
     }
   },
 
-  // Edit name/description of a task by index and sync with server or save locally
+  /**
+   * Edit an existing task and sync with server if online.
+   * @param {mTask} updatedTask
+   */
   editTask: async (updatedTask) => {
     const { tasks, userId, isOnline } = get();
 
@@ -332,7 +359,11 @@ const useTasksStore = create((set, get) => ({
     }
   },
 
-  // Toggle task completion status and sync with server or save locally
+  /**
+   * Toggle completion for a task and sync with server if online.
+   * @param {mTask} task
+   * @param {boolean} value
+   */
   updateIsDone: async (task, value) => {
     const { userId, isOnline } = get();
 
@@ -373,7 +404,10 @@ const useTasksStore = create((set, get) => ({
     }
   },
 
-  // Remove task by index and sync with server or save locally
+  /**
+   * Remove a task and sync with server if online.
+   * @param {mTask} taskToRemove
+   */
   removeTask: async (taskToRemove) => {
     const { userId, isOnline } = get();
 
@@ -416,7 +450,11 @@ const useTasksStore = create((set, get) => ({
     }
   },
 
-  // Move task to a new date group and sync with server or save locally
+  /**
+   * Move a task to a new date group and sync with server if online.
+   * @param {string} id
+   * @param {Date|null} newDate
+   */
   moveTask: async (id, newDate) => {
     const { tasks, userId, isOnline } = get();
     console.log("moveTask called with:", { id, newDate, userId, isOnline });

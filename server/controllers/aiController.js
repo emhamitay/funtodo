@@ -1,5 +1,15 @@
+/**
+ * AI Controller
+ *
+ * Wraps calls to `aiService.askAI` and validates input.
+ */
 import aiService from "../services/aiService.js";
 
+/**
+ * POST /openai/ask
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
 const aiController = async (req, res) => {
   try {
     const { question, userTasks } = req.body;

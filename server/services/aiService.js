@@ -1,4 +1,9 @@
-//This service interacts with the OpenAI API to get responses to user questions.
+/**
+ * AI Service
+ *
+ * Interacts with the OpenAI API to generate suggestions/actions
+ * based on user questions and task context.
+ */
 import { OpenAI } from "openai";
 import { TASK_SYSTEM_PROMPT } from "./aiLogic.js";
 import dotenv from "dotenv";
@@ -9,6 +14,12 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+/**
+ * Ask the AI for suggestions.
+ * @param {string} question
+ * @param {Array<object>} userTasks
+ * @returns {object} Parsed JSON response with `message`, `actions`, `summary` etc.
+ */
 async function askAI(question, userTasks = []) {
   try {
     // Get current date in YYYY-MM-DD format

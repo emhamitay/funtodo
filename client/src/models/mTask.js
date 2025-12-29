@@ -1,9 +1,18 @@
+/**
+ * Task status enum used for UI representation.
+ */
 export const TASK_STATUS = {
   DIDNT_STARTED: "didn't started",
   IN_PROGRESS: "in progress",
   FINISHED: "finished",
 };
 
+/**
+ * Model: mTask
+ *
+ * Represents a task in the client application. Encapsulates mapping
+ * between frontend properties and server payload fields.
+ */
 export class mTask {
   constructor(
     name,
@@ -21,7 +30,11 @@ export class mTask {
     this.groupIndex = groupIndex;
   }
 
-  // Static method to create from server data
+  /**
+   * Create a task instance from server data shape.
+   * @param {Object} serverTask - Task as received from the server
+   * @returns {mTask}
+   */
   static fromServerData(serverTask) {
     return new mTask(
       serverTask.title, // Server uses 'title', frontend uses 'name'
@@ -33,7 +46,10 @@ export class mTask {
     );
   }
 
-  // Convert to server format
+  /**
+   * Convert this task to the server payload shape.
+   * @returns {{title:string, description:string, dueDate:Date|null, completed:boolean}}
+   */
   toServerData() {
     return {
       title: this.name,

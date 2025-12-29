@@ -1,3 +1,9 @@
+/**
+ * Auth Service
+ *
+ * Provides database operations for users: create, existence checks,
+ * retrieval, and admin reset. Uses Drizzle ORM.
+ */
 import { db } from "../db/client.js";
 import { users } from "../db/schema/users.js";
 import { tasks } from "../db/schema/tasks.js";
@@ -20,6 +26,9 @@ const authService = {
 
   /**
    * Create new user
+   * @param {string} username
+   * @param {string} passwordHash
+   * @returns {number|null} New user ID
    */
   Create: async (username, passwordHash) => {
     try {
@@ -36,6 +45,8 @@ const authService = {
 
   /**
    * Check if username exists
+   * @param {string} username
+   * @returns {boolean}
    */
   isUsernameExists: async (username) => {
     const existingUser = await db
@@ -48,6 +59,8 @@ const authService = {
 
   /**
    * Get user by username
+   * @param {string} username
+   * @returns {object|null}
    */
   getUserByUsername: async (username) => {
     try {

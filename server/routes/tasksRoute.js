@@ -1,3 +1,14 @@
+/**
+ * Task Routes (protected)
+ *
+ * Requires JWT via `authenticateTokenMiddleware`.
+ * - GET    /getByUserId   List tasks for authenticated user
+ * - POST   /create        Create a new task
+ * - PUT    /update        Update an existing task
+ * - DELETE /delete        Delete a task
+ * - PUT    /toggleIsDone  Toggle completion
+ * - PUT    /moveTask      Move task to a different date
+ */
 import { Router } from "express";
 import tasksController from "../controllers/tasksController.js";
 import authController from "../controllers/authController.js";

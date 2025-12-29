@@ -1,3 +1,15 @@
+/**
+ * FunTodo Server
+ *
+ * Express application providing REST endpoints for authentication,
+ * task management, and AI assistance. Uses Drizzle ORM with Postgres.
+ *
+ * Env vars:
+ * - PORT: server port (default 3000)
+ * - DATABASE_URL: Postgres connection string
+ * - JWT_SECRET: secret for signing auth tokens
+ * - OPENAI_API_KEY: for AI features
+ */
 import "dotenv/config";
 import express from "express";
 import cors from "cors";

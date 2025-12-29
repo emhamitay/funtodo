@@ -1,3 +1,10 @@
+/**
+ * Auth Routes
+ *
+ * POST /login     - Authenticate user and return JWT
+ * POST /register  - Create a new user and return JWT
+ * POST /reset     - Admin-only reset of users/tasks
+ */
 import { Router } from "express";
 import authController from "../controllers/authController.js";
 

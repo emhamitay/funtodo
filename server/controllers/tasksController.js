@@ -1,6 +1,16 @@
+/**
+ * Tasks Controller
+ *
+ * Handles request validation and orchestration between HTTP layer and
+ * `tasksService`. Assumes `req.userId` is set by auth middleware.
+ */
 import tasksService from "../services/tasksService.js";
 
 const tasksController = {
+  /**
+   * GET /getByUserId
+   * Return tasks for the authenticated user.
+   */
   GetTasksByUserId: async (req, res) => {
     try {
       const tasks = await tasksService.getTasksByUserId(req.userId);
@@ -10,6 +20,10 @@ const tasksController = {
     }
   },
 
+  /**
+   * POST /create
+   * Create a new task for the authenticated user.
+   */
   CreateTask: async (req, res) => {
     console.log("CreateTask request body:", req.body);
     const { title, description, date, isDone } = req.body;
@@ -33,6 +47,10 @@ const tasksController = {
     }
   },
 
+  /**
+   * PUT /update
+   * Update task fields (title/description/date/isDone).
+   */
   UpdateTask: async (req, res) => {
     const { id, title, description, date, isDone } = req.body;
     console.log("UpdateTask request body:", req.body);
@@ -58,6 +76,10 @@ const tasksController = {
     }
   },
 
+  /**
+   * DELETE /delete
+   * Delete a task owned by the authenticated user.
+   */
   DeleteTask: async (req, res) => {
     const { id } = req.body;
     try {
@@ -71,6 +93,10 @@ const tasksController = {
     }
   },
 
+  /**
+   * PUT /toggleIsDone
+   * Toggle completion for a task.
+   */
   ToggleIsDone: async (req, res) => {
     const { id } = req.body;
     try {
@@ -88,6 +114,10 @@ const tasksController = {
     }
   },
 
+  /**
+   * PUT /moveTask
+   * Move a task to a new date (or clear date with null).
+   */
   MoveTask: async (req, res) => {
     const { id, date } = req.body;
     try {

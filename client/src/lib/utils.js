@@ -2,6 +2,11 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { isSameDay } from "date-fns";
 
+/**
+ * Merge conditional class names with Tailwind deduplication.
+ * @param {...(string|undefined|null|boolean|object)} inputs
+ * @returns {string}
+ */
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
@@ -30,6 +35,11 @@ export function getTaskDayClasses(date, tasks) {
   return "";
 }
 
+/**
+ * Normalize a date/time to a local midnight date (Y-M-D).
+ * @param {Date|string} dateToConvert
+ * @returns {Date}
+ */
 export function ConvertDateToYMD(dateToConvert) {
   const original = new Date(dateToConvert); //could be a date or a string
   const d = new Date(

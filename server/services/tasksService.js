@@ -1,3 +1,8 @@
+/**
+ * Tasks Service
+ *
+ * Encapsulates CRUD operations on `tasks` table using Drizzle ORM.
+ */
 import { db } from "../db/client.js";
 import { tasks } from "../db/schema/tasks.js";
 import { eq } from "drizzle-orm";
@@ -5,6 +10,8 @@ import { eq } from "drizzle-orm";
 const tasksService = {
   /**
    * Create new task
+   * @param {object} taskData
+   * @returns {number|null} New task ID
    */
   createTask: async (taskData) => {
     try {
@@ -21,6 +28,8 @@ const tasksService = {
 
   /**
    * Get task by ID
+   * @param {number} taskId
+   * @returns {object|null}
    */
   getTaskByTaskId: async (taskId) => {
     try {
@@ -37,10 +46,10 @@ const tasksService = {
   },
 
   /**
-   * Get task by ID and ensure it belongs to the given user
+   * Get task by ID and ensure it belongs to the given user.
    * @param {number} taskId
    * @param {number} userId
-   * @returns {Object|null} task or null if not found / unauthorized
+   * @returns {object|null} task or null if not found / unauthorized
    */
   getTaskIfOwnedByUser: async (taskId, userId) => {
     const task = await tasksService.getTaskByTaskId(taskId);
@@ -50,6 +59,8 @@ const tasksService = {
 
   /**
    * Get all tasks for a user
+   * @param {number} userId
+   * @returns {object[]} tasks
    */
   getTasksByUserId: async (userId) => {
     try {
@@ -62,6 +73,9 @@ const tasksService = {
 
   /**
    * Update task with validation
+   * @param {number} taskId
+   * @param {object} updateData
+   * @returns {number|null} Updated task ID
    */
   updateTask: async (taskId, updateData) => {
     const allowed = {
@@ -112,6 +126,7 @@ const tasksService = {
 
   /**
    * Delete task by ID
+   * @param {number} taskId
    */
   deleteTask: async (taskId) => {
     try {
@@ -124,6 +139,8 @@ const tasksService = {
 
   /**
    * Toggle task completion
+   * @param {number} taskId
+   * @returns {number|null} Updated task ID
    */
   toggleIsDone: async (taskId) => {
     try {
@@ -145,6 +162,9 @@ const tasksService = {
 
   /**
    * Move task to a new date (can be null to clear the date)
+   * @param {number} taskId
+   * @param {string|Date|null} newDate
+   * @returns {number|null} Updated task ID
    */
   moveTask: async (taskId, newDate) => {
     try {

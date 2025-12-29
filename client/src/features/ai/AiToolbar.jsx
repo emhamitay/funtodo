@@ -1,3 +1,9 @@
+/**
+ * AiToolbar Component
+ *
+ * Provides an input to ask AI for suggestions about tasks and
+ * a preview/approval flow to apply AI-generated create/update/delete actions.
+ */
 import { useState } from "react";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/ui/label";
@@ -15,6 +21,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+/**
+ * @component AiToolbar
+ * @returns {JSX.Element}
+ */
 export default function AiToolbar() {
   const [aiQuestion, setAiQuestion] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +38,11 @@ export default function AiToolbar() {
   const editTask = useTasksStore((state) => state.editTask);
   const removeTask = useTasksStore((state) => state.removeTask);
 
-  // Normalize incoming date values from AI (string/Date/null -> Date|null)
+  /**
+   * Normalize incoming date values from AI (string/Date/null -> Date|null).
+   * @param {string|Date|null|undefined} value
+   * @returns {Date|null}
+   */
   const normalizeDateValue = (value) => {
     if (value === undefined || value === null || value === "") return null;
     if (value instanceof Date) return value;
@@ -36,7 +50,10 @@ export default function AiToolbar() {
     return Number.isNaN(parsed.getTime()) ? null : parsed;
   };
 
-  // Apply AI-generated changes
+  /**
+   * Apply AI-generated changes to the task list.
+   * @param {{create?:Array, update?:Array, delete?:Array}} actions
+   */
   const applyAiActions = async (actions) => {
     try {
       if (actions.create && actions.create.length > 0) {
@@ -105,6 +122,9 @@ export default function AiToolbar() {
     }
   };
 
+  /**
+   * Submit the question to the AI service and handle the preview of actions.
+   */
   async function handleAskAi() {
     if (!aiQuestion.trim()) {
       toast.error("Please enter a question");
@@ -147,6 +167,9 @@ export default function AiToolbar() {
     }
   }
 
+  /**
+   * Approve and apply the pending AI changes.
+   */
   const handleApproveChanges = async () => {
     if (applying) return;
     setApplying(true);
@@ -174,6 +197,9 @@ export default function AiToolbar() {
     }
   };
 
+  /**
+   * Reject the pending AI changes and close the preview.
+   */
   const handleRejectChanges = () => {
     if (applying) return;
     toast.info("Changes cancelled");
@@ -181,6 +207,10 @@ export default function AiToolbar() {
     setPendingChanges(null);
   };
 
+  /**
+   * Submit on Enter key when not loading.
+   * @param {KeyboardEvent} e
+   */
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey && !loading) {
       e.preventDefault();

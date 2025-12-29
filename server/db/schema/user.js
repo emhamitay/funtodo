@@ -1,9 +1,12 @@
 import { pgTable, serial, varchar, timestamp } from "drizzle-orm/pg-core";
 
-// Define User table schema
+/**
+ * Drizzle Schema: users (duplicate)
+ * Note: This file mirrors `schema/users.js`. Prefer a single definition.
+ */
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(), // Primary key column
-  username: varchar("username", { length: 50 }).notNull(), // Username column
-  passwordHash: varchar("password_hash", { length: 255 }).notNull(), // Password hash column
-  createdAt: timestamp("created_at").defaultNow().notNull(), // Creation timestamp column
+  id: serial("id").primaryKey(),
+  username: varchar("username", { length: 50 }).notNull(),
+  passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
