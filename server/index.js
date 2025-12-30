@@ -20,11 +20,14 @@ import authRoutes from "./routes/authRoute.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:5173"];
 
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://your-client.vercel.app"],
+    origin: ALLOWED_ORIGINS,
     credentials: true,
   })
 );

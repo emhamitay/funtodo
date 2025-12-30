@@ -1,9 +1,0 @@
-Next thing is to update the server tasks api
-after that testing the front end against the backend
-
-- 
-testing and setting to build run 
-
---
-uploading ? 
-בעה"י
