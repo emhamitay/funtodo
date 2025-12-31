@@ -23,6 +23,7 @@ const authService = {
    * @param {Function} onFail - Callback function when login fails, receives error message
    */
   Login: async (username, password, onLoginSuccess, onFail) => {
+    console.log("authService: Login called to: ", USERS_LOGIN);
     try {
       // Send login request to backend
       const res = await fetch(USERS_LOGIN, {
