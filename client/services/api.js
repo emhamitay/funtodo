@@ -8,14 +8,10 @@
 //const BASE = import.meta.env.VITE_API_BASE;
 const BASE = "https://funtodo.onrender.com/api";
 
-console.log("ENV CHECK", {
-  VITE_API_BASE: import.meta.env.VITE_API_BASE,
-  MODE: import.meta.env.MODE,
-  ALL: import.meta.env,
-});
-
 // Task endpoints
 export const TASKS_CREATE = `${BASE}/tasks/create`;
+console.log("API BASE URL:", BASE);
+console.log("TASKS_CREATE URL:", TASKS_CREATE);
 export const TASKS_GET_BY_USER_ID = `${BASE}/tasks/getByUserId`;
 export const TASKS_UPDATE = `${BASE}/tasks/update`;
 export const TASKS_DELETE = `${BASE}/tasks/delete`;
