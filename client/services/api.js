@@ -5,8 +5,8 @@
  * Configure the server base in the client `.env` using `VITE_API_BASE`,
  * for example: `VITE_API_BASE=http://localhost:3000/api`.
  */
-const BASE = import.meta.env.VITE_API_BASE;
-//const BASE = "https://funtodo.onrender.com/api";
+//const BASE = import.meta.env.VITE_API_BASE;
+const BASE = "https://funtodo.onrender.com/api";
 
 console.log("ENV CHECK", {
   VITE_API_BASE: import.meta.env.VITE_API_BASE,
