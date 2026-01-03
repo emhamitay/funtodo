@@ -47,3 +47,11 @@ console.log(
   "!!! TEST BASE !!!",
   "https://funtodo.onrender.com/api/tasks/create"
 );
+
+console.log("--- Compose BASE from parts ---");
+const PROTOCOL = "https://";
+const HOST = "funtodo.onrender.com";
+const PATH = "/api";
+export const BASE_COMPOSED = `${PROTOCOL}${HOST}${PATH}`;
+
+console.log("BASE_COMPOSED:", BASE_COMPOSED);
