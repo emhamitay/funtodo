@@ -23,21 +23,13 @@ const PORT = process.env.PORT || 3000;
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : ["http://localhost:5173"];
-console.log("ALLOWED_ORIGINS:", ALLOWED_ORIGINS);
-const origin = "https://funtodo-client-one.vercel.app";
-console.log("hard code origin: ", origin);
 
 app.use(
   cors({
-    origin: origin,
+    origin: ALLOWED_ORIGINS,
     credentials: true,
   })
 );
-/*
-{
-    origin: ALLOWED_ORIGINS,
-    credentials: true,
-  }*/
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
