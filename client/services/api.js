@@ -8,6 +8,10 @@
 const BASE_CURRENT = import.meta.env.VITE_API_BASE;
 const BASE = "https://funtodo.onrender.com/api";
 
+console.log("testing at start ...");
+console.log("BASE_CURRENT:", BASE_CURRENT);
+console.log("BASE:", BASE);
+
 // Task endpoints
 export const TASKS_CREATE = `${BASE}/tasks/create`;
 export const TASKS_GET_BY_USER_ID = `${BASE}/tasks/getByUserId`;
@@ -23,7 +27,7 @@ export const USERS_LOGIN = `${BASE}/auth/login`;
 // AI endpoint
 export const OPENAI_API_ASK = `${BASE}/openai/ask`;
 
-console.log("testing...");
+console.log("testing at end ...");
 console.log("String as is [BASE]:", BASE);
 console.log("TASKS_CREATE:", TASKS_CREATE);
 console.log("BASE_CURRENT:", BASE_CURRENT);
@@ -38,3 +42,8 @@ const test_4 = import.meta.env.VITE_TEST_4 || "no value";
 console.log("test_4:", test_4);
 const test_5 = import.meta.env.VITE_TEST_5 || "no value";
 console.log("test_5:", test_5);
+
+console.log(
+  "!!! TEST BASE !!!",
+  "https://funtodo.onrender.com/api/tasks/create"
+);
