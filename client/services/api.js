@@ -5,13 +5,11 @@
  * Configure the server base in the client `.env` using `VITE_API_BASE`,
  * for example: `VITE_API_BASE=http://localhost:3000/api`.
  */
-//const BASE = import.meta.env.VITE_API_BASE;
+const BASE_CURRENT = import.meta.env.VITE_API_BASE;
 const BASE = "https://funtodo.onrender.com/api";
 
 // Task endpoints
 export const TASKS_CREATE = `${BASE}/tasks/create`;
-console.log("API BASE URL:", BASE);
-console.log("TASKS_CREATE URL:", TASKS_CREATE);
 export const TASKS_GET_BY_USER_ID = `${BASE}/tasks/getByUserId`;
 export const TASKS_UPDATE = `${BASE}/tasks/update`;
 export const TASKS_DELETE = `${BASE}/tasks/delete`;
@@ -24,3 +22,19 @@ export const USERS_LOGIN = `${BASE}/auth/login`;
 
 // AI endpoint
 export const OPENAI_API_ASK = `${BASE}/openai/ask`;
+
+console.log("testing...");
+console.log("String as is [BASE]:", BASE);
+console.log("TASKS_CREATE:", TASKS_CREATE);
+console.log("BASE_CURRENT:", BASE_CURRENT);
+
+const test_1 = import.meta.env.VITE_TEST_1 || "no value";
+console.log("test_1:", test_1);
+const test_2 = import.meta.env.VITE_TEST_2 || "no value";
+console.log("test_2:", test_2);
+const test_3 = import.meta.env.VITE_TEST_3 || "no value";
+console.log("test_3:", test_3);
+const test_4 = import.meta.env.VITE_TEST_4 || "no value";
+console.log("test_4:", test_4);
+const test_5 = import.meta.env.VITE_TEST_5 || "no value";
+console.log("test_5:", test_5);
