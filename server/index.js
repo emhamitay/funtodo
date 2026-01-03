@@ -24,13 +24,12 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : ["http://localhost:5173"];
 
-// Middleware
-app.use(
-  cors({
+app.use(cors());
+/*
+{
     origin: ALLOWED_ORIGINS,
     credentials: true,
-  })
-);
+  }*/
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
