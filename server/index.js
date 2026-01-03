@@ -24,7 +24,7 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : ["http://localhost:5173"];
 console.log("ALLOWED_ORIGINS:", ALLOWED_ORIGINS);
-const origin = "https://funtodo-client-one.vercel.app/";
+const origin = "https://funtodo-client-one.vercel.app";
 console.log("hard code origin: ", origin);
 
 app.use(
