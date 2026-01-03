@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import aiService from "../../../services/aiService";
+import aiService from "../../services/aiService";
 import useTasksStore from "@/store/TasksStore";
 import { mTask } from "@/models/mTask";
 import { toast } from "sonner";

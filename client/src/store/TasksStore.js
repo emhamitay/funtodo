@@ -16,7 +16,7 @@ import {
   TASKS_DELETE,
   TASKS_TOGGLE_ISDONE,
   TASKS_MOVE_TASK,
-} from "../../services/api.js";
+} from "../services/api.js";
 
 // Assign API endpoints from centralized api.js
 const API_URL_TASKS_CREATE = TASKS_CREATE;

@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
-import authService from "../../../services/authService";
+import authService from "../../services/authService";
 
 export default function Login({
   setRegisterOpen,
