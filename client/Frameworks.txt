@@ -1,5 +1,36 @@
-Zustand
-react-calendar (חיצוני)
-react-beautiful-dnd
-Heroicons	
-https://github.com/tailwindlabs/tailwindcss-typography/blob/main/README.md
+# Frontend Frameworks & Libraries
+
+## State Management
+- Zustand 5.0.6 - Lightweight state management
+
+## UI Components & Styling
+- React 19.1.0 - UI framework
+- Tailwind CSS 4.1.11 - Utility-first CSS
+- Radix UI - Accessible component primitives
+- Lucide React 0.525.0 - Icon library (replaces Heroicons)
+
+## Drag & Drop
+- bhi-dnd 1.1.9 - Modern drag & drop library (replaces react-beautiful-dnd)
+
+## Date Handling
+- date-fns 4.1.0 - Modern date utilities
+- react-day-picker 9.8.0 - Calendar component (replaces react-calendar)
+
+## Utilities
+- clsx 2.1.1 - Conditional className utility
+- tailwind-merge 3.3.1 - Tailwind class merging
+
+## Notifications
+- sonner 2.0.7 - Toast notifications
+
+## Typography
+- @tailwindcss/typography 0.5.16 - Typography plugin for Tailwind
+
+## Build Tools
+- Vite 7.0.0 - Build tool and dev server
+- @vitejs/plugin-react-swc 3.10.2 - React Fast Refresh with SWC
+
+## Testing
+- Vitest 1.3.1 - Unit testing framework
+- @testing-library/react 15.0.0 - React testing utilities
+- jsdom 24.0.0 - DOM implementation for tests

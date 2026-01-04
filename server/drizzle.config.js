@@ -11,7 +11,7 @@ export default {
 */
 
 // drizzle.config.js
-import "dotenv/config"; // מאפשר טעינת משתני סביבה מה־.env
+import "dotenv/config"; // Load environment variables from .env file
 import { join } from "path";
 
 /** @type {import('drizzle-kit').Config} */

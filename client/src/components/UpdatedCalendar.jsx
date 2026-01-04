@@ -19,7 +19,7 @@ function Calendar({
   formatters,
   components = {},
   onDrop,
-  tasks = [], // מוסיף prop חדש למערך המשימות
+  tasks = [], // New prop for tasks array
   ...props
 }) {
   const defaultClassNames = getDefaultClassNames();
@@ -149,7 +149,7 @@ function Calendar({
             <ChevronDownIcon className={cn("size-4", className)} {...props} />
           );
         },
-        // כאן משנים את DayButton כך שיעביר את tasks לפרופס
+        // Modified DayButton to pass tasks as props
         DayButton: (dayButtonProps) => (
           <CalendarDayButton {...dayButtonProps} onDrop={onDrop} tasks={tasks} />
         ),

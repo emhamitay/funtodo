@@ -14,7 +14,7 @@
     "build:all": "npm run build && npm run build:server",
     "build:server": "echo \"Server is ready to run\"",
     "build:client": "cd client && npm run build",
-    "install:all": "npm install && cd client && npm install && cd server && npm install",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
     "start": "concurrently --kill-others-on-fail \"npm run start:server\" \"npm run start:client\"",
     "start:server": "cd server && npm start",
     "start:client": "cd client && npm run preview",
@@ -33,7 +33,9 @@
     "react",
     "nodejs",
     "express",
-    "prisma"
+    "drizzle-orm",
+    "vite",
+    "zustand"
   ],
   "author": "",
   "license": "ISC"
