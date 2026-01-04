@@ -151,7 +151,11 @@ function Calendar({
         },
         // Modified DayButton to pass tasks as props
         DayButton: (dayButtonProps) => (
-          <CalendarDayButton {...dayButtonProps} onDrop={onDrop} tasks={tasks} />
+          <CalendarDayButton
+            {...dayButtonProps}
+            onDrop={onDrop}
+            tasks={tasks}
+          />
         ),
         WeekNumber: ({ children, ...props }) => {
           return (
