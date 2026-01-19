@@ -14,6 +14,7 @@ import { Button } from "@/components/Button";
 import LoginFeature from "./features/login/AuthenticationModal";
 import useTasksStore from "@/store/TasksStore";
 import { Toaster } from "sonner";
+import Mocker from "./mock/Mocker";
 
 function App() {
   // Selected date State
@@ -99,6 +100,7 @@ function App() {
         </div>
       </DndProvider>
       <Toaster position="top-center" richColors closeButton duration={4000} />
+      <Mocker run={true} />
     </>
   );
 }
