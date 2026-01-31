@@ -5,7 +5,9 @@ import { mTask } from "../models/mTask";
 const Mocker = ({ run }) => {
   const { tasks, userId, isOnline, createTask, removeTask } = useTasksStore();
 
-  const [aleardyMocked, setAleardyMocked] = useState(false);
+  const [aleardyMocked, setAleardyMocked] = useState(() => {
+    return localStorage.getItem("mockDataCreated") === "true";
+  });
 
   useEffect(() => {
     if (!run) return;
@@ -44,6 +46,7 @@ const Mocker = ({ run }) => {
       }
 
       setAleardyMocked(true);
+      localStorage.setItem("mockDataCreated", "true");
     })();
   }, []);
 
