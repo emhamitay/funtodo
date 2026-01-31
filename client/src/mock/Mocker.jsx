@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useTasksStore from "../store/TasksStore";
 import { mTask } from "../models/mTask";
 
 const Mocker = ({ run }) => {
   const { tasks, userId, isOnline, createTask, removeTask } = useTasksStore();
 
+  const [aleardyMocked, setAleardyMocked] = useState(false);
+
   useEffect(() => {
     if (!run) return;
-    if (isOnline || userId) return;
+    if (isOnline || userId || aleardyMocked) return;
 
     (async () => {
       if (tasks.length) {
@@ -21,25 +23,27 @@ const Mocker = ({ run }) => {
         new mTask(
           "Demo: Welcome to emhlist",
           "Drag me where ever you want",
-          null
+          null,
         ),
         new mTask(
           "Demo: Watch the tasks of today",
           "You have aleardy done this",
           now,
           undefined,
-          true
+          true,
         ),
         new mTask(
           "Contect Amitay Englender",
           "after contacting you can set to for true",
-          tomorrow
+          tomorrow,
         ),
       ];
 
       for (const task of samples) {
         await createTask(task);
       }
+
+      setAleardyMocked(true);
     })();
   }, []);
 
