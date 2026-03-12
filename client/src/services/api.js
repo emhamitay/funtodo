@@ -26,3 +26,6 @@ export const USERS_LOGIN = `${BASE}/auth/login`;
 
 // AI endpoint
 export const OPENAI_API_ASK = `${BASE}/openai/ask`;
+
+// Health check
+export const HEALTH_CHECK = `${PROTOCOL}${HOST}/api/health`;

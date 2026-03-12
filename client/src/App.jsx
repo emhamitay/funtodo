@@ -15,17 +15,31 @@ import LoginFeature from "./features/login/AuthenticationModal";
 import useTasksStore from "@/store/TasksStore";
 import { Toaster } from "sonner";
 import Mocker from "./mock/Mocker";
+import { HEALTH_CHECK } from "@/services/api";
 
 function App() {
   // Selected date State
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isTutorialOn, setTutorialOn] = useState(true);
+  const [serverReady, setServerReady] = useState(true);
 
   // Initialize store with local storage data
   const initialize = useTasksStore((state) => state.initialize);
 
   useEffect(() => {
     initialize();
+  }, []);
+
+  // Wake up the Render server as soon as the page loads
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000);
+    setServerReady(false);
+    fetch(HEALTH_CHECK, { signal: controller.signal })
+      .then(() => setServerReady(true))
+      .catch(() => setServerReady(true)) // even on error, stop showing the banner
+      .finally(() => clearTimeout(timeout));
+    return () => controller.abort();
   }, []);
 
   return (
@@ -92,6 +106,12 @@ function App() {
           </main>
         </div>
       </DndProvider>
+      {!serverReady && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-blue-600 text-white text-sm px-4 py-2 rounded-full shadow-lg">
+          <span className="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full" />
+          Connecting to server...
+        </div>
+      )}
       <Toaster position="top-center" richColors closeButton duration={4000} />
       <Mocker run={true} />
     </>
