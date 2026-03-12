@@ -68,7 +68,7 @@ export default function AiToolbar() {
             dateToUse,
             null,
             false,
-            0
+            0,
           );
           await createTask(newTask);
         }
@@ -78,7 +78,7 @@ export default function AiToolbar() {
       if (actions.update && actions.update.length > 0) {
         for (const updateData of actions.update) {
           const taskToUpdate = tasks.find(
-            (t) => String(t.id) === String(updateData.id)
+            (t) => String(t.id) === String(updateData.id),
           );
           if (taskToUpdate) {
             const resolvedDate =
@@ -97,7 +97,7 @@ export default function AiToolbar() {
               updateData.isdone !== undefined
                 ? updateData.isdone
                 : taskToUpdate.isdone,
-              taskToUpdate.groupIndex
+              taskToUpdate.groupIndex,
             );
             await editTask(updatedTask);
           }
@@ -108,7 +108,7 @@ export default function AiToolbar() {
       if (actions.delete && actions.delete.length > 0) {
         for (const taskId of actions.delete) {
           const taskToRemove = tasks.find(
-            (t) => String(t.id) === String(taskId)
+            (t) => String(t.id) === String(taskId),
           );
           if (taskToRemove) {
             await removeTask(taskToRemove);
@@ -221,13 +221,28 @@ export default function AiToolbar() {
   return (
     <>
       <div className="tutorial-step-5 flex-1 flex items-center gap-2">
-        <Label htmlFor="ai_input">AI:</Label>
+        {/* AI badge */}
+        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-100 shrink-0">
+          <svg
+            className="w-4 h-4 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+        </div>
         <Input
           id="ai_input"
           value={aiQuestion}
           onChange={(e) => setAiQuestion(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Ask me anything about your tasks..."
+          placeholder="Ask AI about your tasks..."
           className="flex-1"
           disabled={loading}
         />
@@ -307,7 +322,7 @@ export default function AiToolbar() {
                 <ul className="list-disc list-inside space-y-1">
                   {pendingChanges.actions.update.map((update, idx) => {
                     const task = tasks.find(
-                      (t) => String(t.id) === String(update.id)
+                      (t) => String(t.id) === String(update.id),
                     );
                     return (
                       <li key={idx} className="text-sm">

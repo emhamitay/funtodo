@@ -25,35 +25,37 @@ export default function Task({ task }) {
   return (
     <div
       className={clsx(
-        "p-2 prose rounded-md border",
+        "px-3 py-2.5 rounded-lg border transition-colors duration-150",
         !task.isdone
-          ? "bg-blue-50 border-blue-100"
-          : "bg-green-50 border-green-100"
+          ? "bg-white border-blue-100 hover:border-blue-200"
+          : "bg-green-50/60 border-green-100 hover:border-green-200",
       )}
     >
-      <div className="flex flex-1 items-start">
-        <h2 className="font-bold antialiased">{task.name}</h2>
-        <div className="flex-1 text-right">
-          <TaskOptionMenu task={task} />
-        </div>
-      </div>
-      <p
-        className={clsx(
-          "text-xs text-gray-500 whitespace-pre-line line-clamp-3",
-          description != "" && "mb-2"
-        )}
-      >
-        {description}
-      </p>
-      <div className="flex items-center gap-2">
+      {/* Header row */}
+      <div className="flex items-center gap-2 mb-1">
         <Checkbox
           id={checkboxName}
           checked={task.isdone}
           onCheckedChange={handleCheck}
-          className="data-[state=checked]:bg-green-300 data-[state=checked]:border-green-100"
+          className="shrink-0 data-[state=checked]:bg-green-400 data-[state=checked]:border-green-300"
         />
-        <Label htmlFor={checkboxName}>Mark as done</Label>
+        <Label
+          htmlFor={checkboxName}
+          className={clsx(
+            "text-sm font-semibold leading-tight cursor-pointer",
+            task.isdone ? "line-through text-blue-300" : "text-blue-950",
+          )}
+        >
+          {task.name}
+        </Label>
+        <TaskOptionMenu task={task} className="ml-auto" />
       </div>
+      {/* Description */}
+      {description !== "" && (
+        <p className="text-[11px] text-blue-400 whitespace-pre-line line-clamp-2 pl-6 leading-snug">
+          {description}
+        </p>
+      )}
     </div>
   );
 }

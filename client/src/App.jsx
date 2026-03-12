@@ -42,30 +42,25 @@ function App() {
           />
         )}
         <GhostLayer />
-        <div className="flex h-screen w-screen">
+        <div className="flex h-screen w-screen bg-white">
           {/* Sidebar (Left) */}
-          <aside className="w-64 flex flex-col p-4 gap-3 justify-center items-center">
+          <aside className="w-64 flex flex-col bg-blue-50/50 border-r border-blue-100 h-full">
             {/* Logo */}
-            <div className="flex-1">
+            <div className="px-4 pt-5 pb-4 border-b border-blue-100">
               <Logo />
             </div>
-            <Separator />
-            {/* Container for tasks & toolbar */}
-            <div className="h-full flex flex-col gap-3">
+
+            {/* Toolbar + Inbox */}
+            <div className="flex flex-col flex-1 px-3 py-4 gap-4 overflow-y-auto">
               <Toolbar /> {/* tutorial-step-1 */}
-              <Inbox /> {/*  tutorial-step-2 */}
+              <Inbox /> {/* tutorial-step-2 */}
             </div>
           </aside>
 
-          <Separator orientation="vertical" />
-
           {/* Main Content (Right) */}
-          <main className="flex flex-1 flex-col p-3 h-full overflow-y-auto space-y-4">
-            {/* Github / maybe login and more toolbar */}
-            <div className=""></div>
-
-            {/* AI container & Options*/}
-            <div className="flex items-center gap-2">
+          <main className="flex flex-1 flex-col h-full overflow-y-auto">
+            {/* Top bar */}
+            <div className="flex items-center gap-2 px-5 py-3 border-b border-blue-100 bg-white">
               <AiToolbar />
               {/* tutorial-step-5 */}
               <Button
@@ -78,22 +73,20 @@ function App() {
               <LoginFeature />
               {/* tutorial-step-6 */}
             </div>
-            <Separator />
 
-            {/* Calendar */}
-            <div className="flex flex-row gap-6 items-start justify-start w-full p-3 ">
+            {/* Calendar + Info row */}
+            <div className="flex flex-row gap-6 items-start justify-start w-full px-5 py-4 border-b border-blue-100">
               <TaskCalendar
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
-              />{" "}
+              />
               {/* tutorial-step-3 */}
-              <Separator orientation="vertical" />
+              <div className="w-px self-stretch bg-blue-100" />
               <Information />
             </div>
 
-            <Separator />
-            {/* Another Component */}
-            <div className="items-start justify-start gap-1 flex-1">
+            {/* Tasks */}
+            <div className="flex-1 px-5 py-4">
               <TasksView selectedDate={selectedDate} /> {/* tutorial-step-4 */}
             </div>
           </main>

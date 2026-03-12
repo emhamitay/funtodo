@@ -43,7 +43,7 @@ export default function TaskOptionMenu({ task }) {
       {/* Drop down menu */}
       <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
         <DropdownMenuTrigger asChild>
-          <button className="p-1">
+          <button className="ml-auto p-1 shrink-0">
             <MoreVertical className="w-5 h-5 cursor-pointer" />
           </button>
         </DropdownMenuTrigger>
