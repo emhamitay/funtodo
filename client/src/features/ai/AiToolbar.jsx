@@ -253,7 +253,7 @@ export default function AiToolbar() {
 
       {/* Preview Changes Dialog */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Preview AI Changes</DialogTitle>
             <DialogDescription>{pendingChanges?.message}</DialogDescription>

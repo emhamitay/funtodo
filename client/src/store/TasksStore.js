@@ -53,12 +53,13 @@ const loadTasksFromLocalStorage = () => {
               taskData.date ? new Date(taskData.date) : null,
               taskData.id,
               taskData.isdone,
-              taskData.groupIndex || 0
-            )
+              taskData.groupIndex || 0,
+            ),
         )
       : [];
   } catch (error) {
     console.error("Error loading tasks from local storage:", error);
+
     return [];
   }
 };
@@ -162,7 +163,7 @@ const useTasksStore = create((set, get) => ({
         console.log("Tasks loaded successfully from server");
       } else {
         console.error(
-          "Failed to load tasks from server, falling back to local storage"
+          "Failed to load tasks from server, falling back to local storage",
         );
         const localTasks = loadTasksFromLocalStorage();
         set({ tasks: localTasks, isOnline: false });
@@ -170,7 +171,7 @@ const useTasksStore = create((set, get) => ({
     } catch (error) {
       console.error(
         "Error loading tasks from server, falling back to local storage:",
-        error
+        error,
       );
       const localTasks = loadTasksFromLocalStorage();
       set({ tasks: localTasks, isOnline: false });
@@ -228,13 +229,13 @@ const useTasksStore = create((set, get) => ({
         toast.success(
           `Awesome! ${mergedCount} local task${
             mergedCount > 1 ? "s" : ""
-          } synced to your account.`
+          } synced to your account.`,
         );
       }
     } catch (error) {
       console.error("Error merging local tasks:", error);
       toast.error(
-        "Oops! Couldn't sync your local tasks. They're still safe locally."
+        "Oops! Couldn't sync your local tasks. They're still safe locally.",
       );
     }
   },
@@ -283,7 +284,7 @@ const useTasksStore = create((set, get) => ({
           if (data.taskId) {
             set((state) => ({
               tasks: state.tasks.map((t) =>
-                t.id === task.id ? { ...t, id: data.taskId } : t
+                t.id === task.id ? { ...t, id: data.taskId } : t,
               ),
             }));
           }
@@ -294,7 +295,7 @@ const useTasksStore = create((set, get) => ({
       } catch (error) {
         console.error(
           "Error creating task on server, keeping local only:",
-          error
+          error,
         );
       }
     } else {
@@ -353,7 +354,7 @@ const useTasksStore = create((set, get) => ({
       } catch (error) {
         console.error(
           "Error updating task on server, keeping local only:",
-          error
+          error,
         );
       }
     }
@@ -398,7 +399,7 @@ const useTasksStore = create((set, get) => ({
       } catch (error) {
         console.error(
           "Error toggling task on server, keeping local only:",
-          error
+          error,
         );
       }
     }
@@ -444,7 +445,7 @@ const useTasksStore = create((set, get) => ({
       } catch (error) {
         console.error(
           "Error deleting task on server, keeping local only:",
-          error
+          error,
         );
       }
     }
@@ -530,7 +531,7 @@ const useTasksStore = create((set, get) => ({
       } catch (error) {
         console.error(
           "Error moving task on server, keeping local only:",
-          error
+          error,
         );
       }
     }
