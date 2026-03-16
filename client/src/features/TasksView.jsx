@@ -140,7 +140,9 @@ export default function TasksView({ selectedDate }) {
                     d="M19 9l-7 7-7-7"
                   />
                 </svg>
-                <span className="text-[10px] text-blue-300">Drop here to move to end</span>
+                <span className="text-[10px] text-blue-300">
+                  Drop here to move to end
+                </span>
               </div>
             </>
           )}
