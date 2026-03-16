@@ -38,5 +38,8 @@
     "zustand"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@emhamitay/ghostdrop": "^2.1.0"
+  }
 }

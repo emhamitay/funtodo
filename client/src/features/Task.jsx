@@ -1,13 +1,11 @@
 import taskStore from "@/store/TasksStore";
 import TaskOptionMenu from "@/features/TaskOptionMenu";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import clsx from "clsx";
 
 const MAX_DESCRIPTION = 20;
 
 export default function Task({ task }) {
-  const checkboxName = `isDone-${task.id}`;
   const updateIsDone = taskStore((s) => s.updateIsDone);
   function handleCheck(value) {
     updateIsDone(task, value);
@@ -34,20 +32,18 @@ export default function Task({ task }) {
       {/* Header row */}
       <div className="flex items-center gap-2 mb-1">
         <Checkbox
-          id={checkboxName}
           checked={task.isdone}
           onCheckedChange={handleCheck}
           className="shrink-0 data-[state=checked]:bg-green-400 data-[state=checked]:border-green-300"
         />
-        <Label
-          htmlFor={checkboxName}
+        <span
           className={clsx(
-            "text-sm font-semibold leading-tight cursor-pointer",
+            "text-sm font-semibold leading-tight select-none",
             task.isdone ? "line-through text-blue-300" : "text-blue-950",
           )}
         >
           {task.name}
-        </Label>
+        </span>
         <TaskOptionMenu task={task} className="ml-auto" />
       </div>
       {/* Description */}

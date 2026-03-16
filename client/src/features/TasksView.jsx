@@ -10,7 +10,10 @@ Here's how it works:
 */
 import { isSameDay } from "date-fns";
 import taskStore from "@/store/TasksStore";
-import { DroppableSortableWrapper, SortableDraggable } from "bhi-dnd";
+import {
+  DroppableSortableWrapper,
+  SortableDraggable,
+} from "@emhamitay/ghostdrop";
 import { ConvertDateToYMD } from "@/lib/utils";
 import Task from "@/features/Task.jsx";
 
@@ -27,6 +30,7 @@ export default function TasksView({ selectedDate }) {
   const tasks = taskStore((s) => s.tasks);
   const isOnline = taskStore((s) => s.isOnline);
   const userId = taskStore((s) => s.userId);
+  const updateGroupIndex = taskStore((s) => s.updateGroupIndex);
 
   function onDrop(item) {
     moveTask(item.id, d);
@@ -85,10 +89,13 @@ export default function TasksView({ selectedDate }) {
       <DroppableSortableWrapper
         indexKey="groupIndex"
         id="tasks_view"
+        items={date_tasks}
+        onSorted={updateGroupIndex}
         onDrop={onDrop}
-        className="flex-1 w-full"
+        layoutAnimation="none"
+        className="flex-1 w-full min-h-0"
       >
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-2 w-full h-full min-h-[200px] pb-4">
           {date_tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 gap-2 rounded-xl border border-dashed border-blue-200">
               <svg
@@ -112,11 +119,30 @@ export default function TasksView({ selectedDate }) {
               </p>
             </div>
           ) : (
-            date_tasks.map((task) => (
-              <SortableDraggable key={task.id} id={task.id}>
-                <Task task={task} index={task.groupIndex} key={task.id} />
-              </SortableDraggable>
-            ))
+            <>
+              {date_tasks.map((task) => (
+                <SortableDraggable key={task.id} id={task.id}>
+                  <Task task={task} index={task.groupIndex} key={task.id} />
+                </SortableDraggable>
+              ))}
+              {/* Drop zone below last task */}
+              <div className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg border border-dashed border-blue-100 mt-1">
+                <svg
+                  className="w-3 h-3 text-blue-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+                <span className="text-[10px] text-blue-300">Drop here to move to end</span>
+              </div>
+            </>
           )}
         </div>
       </DroppableSortableWrapper>

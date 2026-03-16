@@ -8,7 +8,7 @@ import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { getTaskDayClasses } from "@/lib/utils";
-import { Droppable } from "bhi-dnd";
+import { Droppable } from "@emhamitay/ghostdrop";
 
 function Calendar({
   className,

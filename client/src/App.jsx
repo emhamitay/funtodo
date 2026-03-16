@@ -7,7 +7,7 @@ import { TaskCalendar } from "./features/TaskCalendar";
 import { useState, useEffect } from "react";
 import TasksView from "@/features/TasksView";
 import Information from "@/features/Information";
-import { DndProvider, GhostLayer } from "bhi-dnd";
+import { DndProvider, GhostLayer } from "@emhamitay/ghostdrop";
 import Tutorial from "@/lib/tutorial/Tutorial";
 import steps from "@/lib/tutorial/steps";
 import { Button } from "@/components/Button";

@@ -1,6 +1,9 @@
 import Task from "@/features/Task";
 import taskStore from "@/store/TasksStore";
-import { DroppableSortableWrapper, SortableDraggable } from "bhi-dnd";
+import {
+  DroppableSortableWrapper,
+  SortableDraggable,
+} from "@emhamitay/ghostdrop";
 
 export default function Inbox() {
   const tasks = taskStore((s) => s.tasks);
@@ -54,6 +57,7 @@ export default function Inbox() {
         id="inbox"
         items={filteredTasks}
         onDrop={onDrop}
+        layoutAnimation="none"
         className="flex-1"
       >
         <div className="flex flex-col gap-2 rounded-lg border border-dashed border-blue-200 p-2 min-h-[80px]">
